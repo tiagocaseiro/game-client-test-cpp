@@ -1,0 +1,16 @@
+Title=Stockholm-01
+Background=Background-03.png
+NextLevelFile=./assets/Levels/Level4.txt
+tiles=
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,c,c,c,c,0,c,c,c,c,0,c,c,c,c,0
+0,c,o,o,c,0,c,v,v,c,0,c,r,r,c,0
+0,c,p,o,c,0,c,v,v,c,0,c,r,p,c,0
+0,s,s,s,s,0,s,s,s,s,0,s,s,s,s,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,c,c,c,c,c,0,0,c,c,c,c,c,0,0
+0,0,c,b,p,b,c,0,0,c,g,p,g,c,0,0
+0,0,c,b,b,b,c,0,0,c,g,g,g,c,0,0
+0,0,s,s,s,s,s,0,0,s,s,s,s,s,0,0

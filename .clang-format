@@ -1,0 +1,13 @@
+BasedOnStyle: Microsoft
+IndentWidth: 4
+Language: Cpp
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+AccessModifierOffset: -4 
+PointerAlignment: Left
+SpaceBeforeParens: Never
+IndentCaseLabels: true
+BraceWrapping:
+  AfterCaseLabel: true
+AllowShortLambdasOnASingleLine: None
+AlwaysBreakTemplateDeclarations: Yes
