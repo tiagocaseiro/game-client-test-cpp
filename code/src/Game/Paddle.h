@@ -7,19 +7,21 @@
 class Paddle
 {
 public:
-	Paddle(King::Engine& engine);
-	void ResetPosition();
-	void Update();
-	void Render() const;
+    Paddle(King::Engine& engine);
+    void ResetPosition();
+    void Update();
+    void Render() const;
 
-	int GetColliderId() const { return mCollisionBoxId; }
-	glm::vec2 GetCenter() const;
+    int GetColliderId() const
+    {
+        return mCollisionBoxId;
+    }
+    glm::vec2 GetCenter() const;
 
 private:
-	King::Engine& mEngine;
+    King::Engine& mEngine;
 
-	glm::vec2 mPosition;
-	King::BoxCollider* mCollisionBox;
-	int mCollisionBoxId, mPaddleTxId;
+    glm::vec2 mPosition;
+    King::BoxCollider* mCollisionBox;
+    int mCollisionBoxId, mPaddleTxId;
 };
-

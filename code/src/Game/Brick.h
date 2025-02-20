@@ -7,35 +7,44 @@
 const int kBrickWidth = 64;
 const int kBrickHeight = 32;
 
-class Brick {
+class Brick
+{
 public:
-	enum BrickType {
-		BRICK_RED,
-		BRICK_GREEN,
-		BRICK_BLUE,
-		BRICK_ORANGE,
-		BRICK_GLASS,
-		BRICK_GREY,
-		BRICK_COUNTER,
-		BRICK_SOLID
-	};
-	
-	Brick(King::Engine& engine, const glm::vec2& position, int healthPoints, BrickType type);
+    enum BrickType
+    {
+        BRICK_RED,
+        BRICK_GREEN,
+        BRICK_BLUE,
+        BRICK_ORANGE,
+        BRICK_GLASS,
+        BRICK_GREY,
+        BRICK_COUNTER,
+        BRICK_SOLID
+    };
 
-	void OnHit();
-	void Render();
+    Brick(King::Engine& engine, const glm::vec2& position, int healthPoints, BrickType type);
 
-	int Health() const { return mHealthPoints; }
-	int ScoreValue() const { return mScoreValue; }
+    void OnHit();
+    void Render();
+
+    int Health() const
+    {
+        return mHealthPoints;
+    }
+    int ScoreValue() const
+    {
+        return mScoreValue;
+    }
+
 private:
-	void UpdateBrickCounterTexture();
+    void UpdateBrickCounterTexture();
 
 private:
-	King::Engine& mEngine;
+    King::Engine& mEngine;
 
-	BrickType mType;
-	glm::vec2 mPosition;
-	int mHealthPoints = 1;
-	int mTexture;
-	int mScoreValue;
+    BrickType mType;
+    glm::vec2 mPosition;
+    int mHealthPoints = 1;
+    int mTexture;
+    int mScoreValue;
 };

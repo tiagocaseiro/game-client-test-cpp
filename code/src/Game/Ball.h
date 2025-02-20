@@ -3,40 +3,45 @@
 
 #include "Paddle.h"
 
-#include <king/CollisionWorld.h>
-#include <king/Engine.h>
 #include <glm/vec2.hpp>
+#include <king/CollisionWorld.h>
 
-class Ball : public King::CollisionWorld::CollisionListener {
+class Ball : public King::CollisionWorld::CollisionListener
+{
 public:
-	Ball(King::Engine& engine);
-	~Ball();
+    Ball(King::Engine& engine);
+    ~Ball();
 
-	void SetStatic(bool isStatic);
-	bool IsStatic() const;
-	void SetPos(float posX, float posY);
-	void SetVelocity(const glm::vec2& velocity);
-	int ColliderId() const { return mBallColliderId; }
+    void SetStatic(bool isStatic);
+    bool IsStatic() const;
+    void SetPos(float posX, float posY);
+    void SetVelocity(const glm::vec2& velocity);
+    int ColliderId() const
+    {
+        return mBallColliderId;
+    }
 
-	void SetPaddle(Paddle* paddle) {
-		mPaddle = paddle;
-	}
+    void SetPaddle(Paddle* paddle)
+    {
+        mPaddle = paddle;
+    }
 
-	void Update();
-	void Render() const;
+    void Update();
+    void Render() const;
 
-	void SetLevelClear(bool levelClear) {
-		mIsLevelClear = levelClear;
-	}
+    void SetLevelClear(bool levelClear)
+    {
+        mIsLevelClear = levelClear;
+    }
 
 private:
-	void OnCollision(int l, int r) override;
+    void OnCollision(int l, int r) override;
 
-	King::Engine& mEngine;
-	int mBallTxId;
-	int mBallColliderId;
-	King::RigidBody* mRigidBody;
-	Paddle* mPaddle;
+    King::Engine& mEngine;
+    int mBallTxId;
+    int mBallColliderId;
+    King::RigidBody* mRigidBody;
+    Paddle* mPaddle;
 
-	bool mIsLevelClear = false;
+    bool mIsLevelClear = false;
 };

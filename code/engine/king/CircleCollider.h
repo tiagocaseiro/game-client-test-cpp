@@ -4,15 +4,16 @@
 #include "glm/vec2.hpp"
 #include <vector>
 
-namespace King {
+namespace King
+{
 
-struct CircleCollider {
-	CircleCollider(const glm::vec2& position, float radius)
-		: mPosition(position)
-		, mRadius(radius)
-	{}
+struct CircleCollider
+{
+    CircleCollider(const glm::vec2& position, float radius) : mPosition(position), mRadius(radius)
+    {
+    }
 
-	glm::vec2 mPosition;
-	float mRadius;
+    glm::vec2 mPosition;
+    float mRadius;
 };
-}
+} // namespace King

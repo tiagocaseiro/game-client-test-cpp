@@ -5,7 +5,9 @@
 
 #include <string>
 
-class LevelLoader {
+class LevelLoader
+{
 public:
-	static std::unique_ptr<Level> LoadLevel(const std::string& levelName, King::Engine& engine, Level::ScoreReportingFunction scoreReportingFunction);
+    static std::unique_ptr<Level> LoadLevel(const std::string& levelName, King::Engine& engine,
+                                            Level::ScoreReportingFunction scoreReportingFunction);
 };

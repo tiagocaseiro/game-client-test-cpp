@@ -2,6 +2,8 @@
 #include "Ball.h"
 #include <glm/glm.hpp>
 
+#include <king/Engine.h>
+
 namespace {
 const float kSpeed = 10.0f;
 const float kRadius = 12.0f;

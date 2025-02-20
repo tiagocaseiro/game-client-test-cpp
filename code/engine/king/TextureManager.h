@@ -4,22 +4,24 @@
 #include <memory>
 #include <string>
 
-namespace King {
+namespace King
+{
 
 class SdlSurface;
 class SdlWindow;
 
-class TextureManager {
+class TextureManager
+{
 public:
-	TextureManager(SdlWindow& window);
-	~TextureManager();
+    TextureManager(SdlWindow& window);
+    ~TextureManager();
 
-	int LoadTexture(const std::string& path);
-	SdlSurface* GetTexture(int id);
+    int LoadTexture(const std::string& path);
+    SdlSurface* GetTexture(int id);
 
 private:
-	class TextureManagerImpl;
-	std::unique_ptr<TextureManagerImpl> mImpl;
+    class TextureManagerImpl;
+    std::unique_ptr<TextureManagerImpl> mImpl;
 };
 
-}
+} // namespace King
