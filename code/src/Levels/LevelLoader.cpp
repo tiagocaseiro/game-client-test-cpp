@@ -54,7 +54,7 @@ void ParseBlockChar(char c, Level* level, const glm::vec2& brickPos)
     }
     else if(c == 'p')
     {
-        level->AddBrick(brickPos, Brick::BRICK_PINK);
+        assert(false && "Unknown type of brick!");
     }
 }
 } // namespace
