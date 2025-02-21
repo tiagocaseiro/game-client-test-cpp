@@ -51,13 +51,7 @@ void HitDamageComponent::Update()
 
 void HitDamageComponent::OnCollision(int l, int r)
 {
-    if(mCollisionBoxComponentRef.expired() || mHealthComponentRef.expired())
-    {
-        return;
-    }
-
-    std::shared_ptr<HealthComponent> healthComponent = mHealthComponentRef.lock();
-    if(healthComponent->IsAlive() == false)
+    if(mCollisionBoxComponentRef.expired())
     {
         return;
     }
@@ -66,19 +60,39 @@ void HitDamageComponent::OnCollision(int l, int r)
 
     std::optional<int> colliderId = collisionBoxComponent->ColliderId();
 
-    if(colliderId.has_value() == false)
+    if(colliderId && (l == *colliderId || r == *colliderId))
+    {
+        std::shared_ptr<HealthComponent> healthComponent = mHealthComponentRef.lock();
+
+        if(healthComponent)
+        {
+            HandleCollisionOnMortal(*healthComponent);
+            return;
+        }
+
+        HandleCollisionOnImmortal();
+    }
+}
+
+void HitDamageComponent::HandleCollisionOnImmortal()
+{
+    if(mScoreComponentRef.expired() || mOwnerRef.expired())
+    {
+        return;
+    }
+    GameObjectShared owner = mOwnerRef.lock();
+
+    owner->GameLevel().UpdateScore(ScoreComponent::DefaultScore());
+}
+
+void HitDamageComponent::HandleCollisionOnMortal(HealthComponent& healthComponent)
+{
+    if(healthComponent.IsAlive() == false)
     {
         return;
     }
 
-    if(l == *colliderId || r == *colliderId)
-    {
-        mHealthComponentRef.lock()->Decrement();
-    }
-    else
-    {
-        return;
-    }
+    healthComponent.Decrement();
 
     if(mScoreComponentRef.expired() || mOwnerRef.expired())
     {
@@ -86,9 +100,10 @@ void HitDamageComponent::OnCollision(int l, int r)
     }
 
     std::shared_ptr<ScoreComponent> scoreComponent = mScoreComponentRef.lock();
-    GameObjectShared owner                         = mOwnerRef.lock();
 
-    if(healthComponent->IsAlive())
+    GameObjectShared owner = mOwnerRef.lock();
+
+    if(healthComponent.IsAlive())
     {
         owner->GameLevel().UpdateScore(ScoreComponent::DefaultScore());
     }

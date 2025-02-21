@@ -26,6 +26,9 @@ public:
     void DebugHit();
 
 private:
+    void HandleCollisionOnImmortal();
+    void HandleCollisionOnMortal(HealthComponent& healthComponent);
+
     HitDamageComponent(GameObjectRef owner, King::Engine& engine);
 
     std::weak_ptr<CollisionBoxComponent> mCollisionBoxComponentRef;
