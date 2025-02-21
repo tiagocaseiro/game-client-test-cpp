@@ -118,6 +118,9 @@ componentEnd=
 componentStart=ScoreComponent
 componentEnd=
 
+componentStart=HitDamageComponent
+componentEnd=
+
 id=g
 
 componentStart=SpriteComponent
