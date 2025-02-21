@@ -39,6 +39,17 @@ public:
         return std::pair(T::ID(), T::MakeComponent);
     }
 
+    template <typename T>
+    std::weak_ptr<T> GetOwnerComponent()
+    {
+        if(mOwnerRef.expired())
+        {
+            return {};
+        }
+
+        return mOwnerRef.lock()->FindComponent<T>();
+    }
+
 protected:
     const GameObjectRef mOwnerRef;
     King::Engine& mEngine;

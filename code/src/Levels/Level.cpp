@@ -89,7 +89,7 @@ void Level::DestroyAllBricks()
 }
 
 // CollisionListener
-void Level::OnCollision(int l, int r)
+void Level::OnCollision(int /*l*/, int /*r*/)
 {
     // auto brickIt1 = mBricks.find(l);
     // auto brickIt2 = mBricks.find(r);

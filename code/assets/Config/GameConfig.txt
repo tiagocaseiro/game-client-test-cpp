@@ -18,8 +18,8 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=DamageComponent
-default=10
+componentStart=OnHitDamageComponent
+damage=
 componentEnd=
 
 id=r

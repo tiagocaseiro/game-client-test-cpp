@@ -26,15 +26,16 @@ ComponentShared HealthComponent::MakeComponent(GameObjectRef owner, King::Engine
     return std::shared_ptr<Component>(new HealthComponent(owner, engine, maxHealth));
 }
 
-void HealthComponent::DecrementHealth(const u32 dec)
+void HealthComponent::Decrement(const u32 dec)
 {
-    if(dec >= mHealth)
+    mHealth -= dec;
+
+    mHealth = std::max(mHealth, 0);
+
+    if(IsAlive() == false)
     {
-        mHealth = 0;
-        // mark for destruction
         return;
     }
-    mHealth -= dec;
 
     GameObjectShared owner = mOwnerRef.lock();
 

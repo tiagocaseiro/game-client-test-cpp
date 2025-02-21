@@ -39,7 +39,7 @@ ComponentShared CollisionBoxComponent::MakeComponent(GameObjectRef owner, King::
 
 CollisionBoxComponent::CollisionBoxComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2 position,
                                              const glm::vec2 dimensions)
-    : Component(owner, engine), mPosition(position), mDimensions(mDimensions)
+    : Component(owner, engine), mPosition(position), mDimensions(dimensions)
 {
     InitCollisionId();
 }
@@ -52,23 +52,29 @@ void CollisionBoxComponent::UpdateData(const glm::vec2 position, const glm::vec2
     InitCollisionId();
 }
 
+std::optional<int> CollisionBoxComponent::ColliderId() const
+{
+    return mColliderId;
+}
+
 CollisionBoxComponent::~CollisionBoxComponent()
 {
-    if(mCollisionId)
+    if(mColliderId)
     {
-        mEngine.GetCollisionWorld().RemoveBoxCollider(*mCollisionId);
+        mEngine.GetCollisionWorld().RemoveBoxCollider(*mColliderId);
     }
 }
 
 void CollisionBoxComponent::InitCollisionId()
 {
-    if(mCollisionId)
+    if(mColliderId)
     {
-        mEngine.GetCollisionWorld().RemoveBoxCollider(*mCollisionId);
-        mCollisionId = std::nullopt;
+        mEngine.GetCollisionWorld().RemoveBoxCollider(*mColliderId);
+        mColliderId = std::nullopt;
     }
-    mCollisionId = mEngine.GetCollisionWorld().AddBoxCollider(mPosition, mDimensions, 1 << 1, 0);
+    mColliderId = mEngine.GetCollisionWorld().AddBoxCollider(mPosition, mDimensions, 1 << 1, 0);
 }
+
 // const std::string& CollisionCircleComponent::ID()
 //{
 //     static const std::string id = "CollisionCircleComponent";

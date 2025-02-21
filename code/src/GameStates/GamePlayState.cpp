@@ -10,6 +10,7 @@
 #include "Components/CollisionComponent.h"
 #include "Components/Component.h"
 #include "Components/HealthComponent.h"
+#include "Components/HitDamageComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
 
@@ -22,6 +23,8 @@ std::unordered_map<std::string, ComponentInternalInitFunc> sComponentTypesInitFu
     Component::InitData<TransformComponent>(),       
     Component::InitData<CollisionBoxComponent>(),
     //Component::InitData<CollisionCircleComponent>()
+    Component::InitData<HitDamageComponent>(),
+
 };
 // clang-format on
 

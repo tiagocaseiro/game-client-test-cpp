@@ -17,6 +17,8 @@ public:
 
     void UpdateData(const glm::vec2 position, const glm::vec2 dimensions);
 
+    std::optional<int> ColliderId() const;
+
 private:
     CollisionBoxComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2 position,
                           const glm::vec2 dimensions);
@@ -25,7 +27,7 @@ private:
 
     glm::vec2 mPosition;
     glm::vec2 mDimensions;
-    std::optional<int> mCollisionId;
+    std::optional<int> mColliderId;
 };
 
 // class CollisionCircleComponent : public Component
