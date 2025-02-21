@@ -73,7 +73,7 @@ void ReadGameConfig(King::Engine& engine)
             continue;
         }
 
-        if(StartsWith(line, "parameter=1"))
+        if(StartsWith(line, "parameter="))
         {
             currentParameters.emplace_back(line.substr(10));
             continue;
