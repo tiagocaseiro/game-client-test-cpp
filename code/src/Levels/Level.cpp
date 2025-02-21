@@ -2,6 +2,7 @@
 #include "Level.h"
 
 #include "Components/HealthComponent.h"
+#include "Components/HitDamageComponent.h"
 
 Level::Level(King::Engine& engine, ScoreReportingFunction scoreReportingFunction)
     : mEngine(engine), mScoreReportingFunction(scoreReportingFunction)
@@ -19,23 +20,32 @@ void Level::Reset()
     // mNumBricksLeft = 0;
 }
 
-void Level::AddBrick(const glm::vec2& /*position*/, Brick::BrickType /*type*/, int /*hitPoints*/)
-{
-    // Brick brick(mEngine, position, hitPoints, type);
-    // int brickId = mEngine.GetCollisionWorld().AddBoxCollider(position, glm::vec2(kBrickWidth, kBrickHeight), 1 << 1,
-    // 0);
+// void Level::AddBrick(const glm::vec2& /*position*/, Brick::BrickType /*type*/, int /*hitPoints*/)
+//{
+//  Brick brick(mEngine, position, hitPoints, type);
+//  int brickId = mEngine.GetCollisionWorld().AddBoxCollider(position, glm::vec2(kBrickWidth, kBrickHeight), 1 << 1,
+//  0);
 
-    // mBricks.emplace(std::pair(brickId, std::move(brick)));
+// mBricks.emplace(std::pair(brickId, std::move(brick)));
 
-    // if(type != Brick::BRICK_SOLID)
-    //{
-    //     mNumBricksLeft++;
-    // }
-}
+// if(type != Brick::BRICK_SOLID)
+//{
+//     mNumBricksLeft++;
+// }
+//}
 
 void Level::AddBrick(const GameObjectShared& brick)
 {
     mBricks.emplace_back(brick);
+}
+
+void Level::MarkForDeath(const GameObjectShared& gameObject)
+{
+    auto it = std::find(std::begin(mBricks), std::end(mBricks), gameObject);
+    if(it != std::end(mBricks))
+    {
+        mGameObjectsToDelete.emplace(*it);
+    }
 }
 
 void Level::Render()
@@ -59,10 +69,18 @@ void Level::Render()
 
 void Level::Update()
 {
-    for(const GameObjectShared& brick : mBricks)
+    for(auto it = std::begin(mBricks); it != std::end(mBricks);)
     {
+        std::shared_ptr<GameObject> brick = *it;
         if(brick == nullptr)
         {
+            it = mBricks.erase(it);
+            continue;
+        }
+
+        if(mGameObjectsToDelete.find(brick) != std::end(mGameObjectsToDelete))
+        {
+            it = mBricks.erase(it);
             continue;
         }
 
@@ -73,7 +91,15 @@ void Level::Update()
                 component->Update();
             }
         }
+        it++;
     }
+
+    mGameObjectsToDelete.clear();
+}
+
+void Level::UpdateScore(int score)
+{
+    mScoreReportingFunction(score);
 }
 
 int Level::NumBricksLeft() const
@@ -83,9 +109,29 @@ int Level::NumBricksLeft() const
     });
 }
 
-void Level::DestroyAllBricks()
+void Level::DebugDestroyAllBricks()
 {
     mBricks.clear();
+}
+
+void Level::DebugDamageFirstBrick()
+{
+    if(mBricks.empty())
+    {
+        return;
+    }
+
+    GameObjectShared first = mBricks.front();
+
+    if(first == nullptr)
+    {
+        return;
+    }
+
+    if(std::shared_ptr<HitDamageComponent> hitDamageComponent = first->FindComponent<HitDamageComponent>())
+    {
+        hitDamageComponent->DebugHit();
+    }
 }
 
 // CollisionListener

@@ -36,7 +36,7 @@ private:
 
     King::Engine& mEngine;
     GameEndedFunction mGameEndedFunction;
-    std::unique_ptr<Level> mLevel;
+    LevelShared mLevel;
     int mBGTx, mPanelTx, mTextFrameTx;
 
     int mScore;

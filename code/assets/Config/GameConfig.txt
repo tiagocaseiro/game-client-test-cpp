@@ -18,16 +18,19 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=OnHitDamageComponent
-damage=
+componentStart=HitDamageComponent
 componentEnd=
 
-id=r
+componentStart=ScoreComponent
+score=200
+componentEnd=
 
-id=o
+id=r/
 
-id=b
+id=o/
 
-id=g
+id=b/
 
-id=p
+id=g/
+
+id=p/

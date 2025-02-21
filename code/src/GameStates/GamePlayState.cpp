@@ -11,6 +11,7 @@
 #include "Components/Component.h"
 #include "Components/HealthComponent.h"
 #include "Components/HitDamageComponent.h"
+#include "Components/ScoreComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
 
@@ -24,7 +25,7 @@ std::unordered_map<std::string, ComponentInternalInitFunc> sComponentTypesInitFu
     Component::InitData<CollisionBoxComponent>(),
     //Component::InitData<CollisionCircleComponent>()
     Component::InitData<HitDamageComponent>(),
-
+    Component::InitData<ScoreComponent>()
 };
 // clang-format on
 
@@ -181,8 +182,15 @@ void GamePlayState::Update()
         // Cheat!
         if(mEngine.GetKeyDown(SDLK_w))
         {
-            mLevel->DestroyAllBricks();
+            mLevel->DebugDestroyAllBricks();
         }
+
+        static bool canDebugHit = true;
+        if(mEngine.GetKeyDown(SDLK_1) && canDebugHit)
+        {
+            mLevel->DebugDamageFirstBrick();
+        }
+        canDebugHit = mEngine.GetKeyUp(SDLK_1);
 
         if(mEngine.GetMouseButtonPressed())
         {

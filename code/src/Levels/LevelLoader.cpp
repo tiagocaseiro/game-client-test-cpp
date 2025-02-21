@@ -18,48 +18,48 @@ bool StartsWith(const std::string& text, const std::string& start)
 {
     return (text.find(start) == 0);
 }
-
-void ParseBlockChar(char c, Level* level, const glm::vec2& brickPos)
-{
-    if(c == 'r')
-    {
-        // Red block
-        level->AddBrick(brickPos, Brick::BRICK_RED);
-    }
-    else if(c == 'g')
-    {
-        level->AddBrick(brickPos, Brick::BRICK_GREEN);
-    }
-    else if(c == 'b')
-    {
-        level->AddBrick(brickPos, Brick::BRICK_BLUE);
-    }
-    else if(c == 'o')
-    {
-        level->AddBrick(brickPos, Brick::BRICK_ORANGE);
-    }
-    else if(c == 'v')
-    {
-        level->AddBrick(brickPos, Brick::BRICK_GLASS);
-    }
-    else if(c == 'c')
-    {
-        level->AddBrick(brickPos, Brick::BRICK_GREY, 2);
-    }
-    else if(c == 's')
-    {
-        level->AddBrick(brickPos, Brick::BRICK_SOLID);
-    }
-    else if(c > '0' && c < '8')
-    {
-        int hitPoints = c - '0';
-        level->AddBrick(brickPos, Brick::BRICK_COUNTER, hitPoints);
-    }
-    else if(c == 'p')
-    {
-        assert(false && "Unknown type of brick!");
-    }
-}
+//
+// void ParseBlockChar(char c, Level* level, const glm::vec2& brickPos)
+//{
+//    if(c == 'r')
+//    {
+//        // Red block
+//        level->AddBrick(brickPos, Brick::BRICK_RED);
+//    }
+//    else if(c == 'g')
+//    {
+//        level->AddBrick(brickPos, Brick::BRICK_GREEN);
+//    }
+//    else if(c == 'b')
+//    {
+//        level->AddBrick(brickPos, Brick::BRICK_BLUE);
+//    }
+//    else if(c == 'o')
+//    {
+//        level->AddBrick(brickPos, Brick::BRICK_ORANGE);
+//    }
+//    else if(c == 'v')
+//    {
+//        level->AddBrick(brickPos, Brick::BRICK_GLASS);
+//    }
+//    else if(c == 'c')
+//    {
+//        level->AddBrick(brickPos, Brick::BRICK_GREY, 2);
+//    }
+//    else if(c == 's')
+//    {
+//        level->AddBrick(brickPos, Brick::BRICK_SOLID);
+//    }
+//    else if(c > '0' && c < '8')
+//    {
+//        int hitPoints = c - '0';
+//        level->AddBrick(brickPos, Brick::BRICK_COUNTER, hitPoints);
+//    }
+//    else if(c == 'p')
+//    {
+//        assert(false && "Unknown type of brick!");
+//    }
+//}
 } // namespace
 
 std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King::Engine& engine,
@@ -135,7 +135,7 @@ void LevelLoader::LoadBrick(const ComponentsInitData& componentsInitData, const 
     brickPos.y = float(y * kBrickHeight);
 
     std::string brickType = row.substr(0, 1);
-    if(std::shared_ptr<GameObject> brick = std::shared_ptr<GameObject>(new GameObject()))
+    if(std::shared_ptr<GameObject> brick = std::shared_ptr<GameObject>(new GameObject(level)))
     {
         auto it = componentsInitData.find(brickType);
         if(it == std::end(componentsInitData))

@@ -23,6 +23,7 @@ public:
     bool GetMouseButtonDown() const;
     bool GetMouseButtonPressed() const;
     bool GetKeyDown(int keyCode) const;
+    bool GetKeyUp(int keyCode) const;
 
     void SetCursorVisible(bool visible);
 

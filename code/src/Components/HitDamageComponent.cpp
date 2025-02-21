@@ -4,7 +4,10 @@
 #include <king/Engine.h>
 
 #include "CollisionComponent.h"
+#include "Game/GameObject.h"
 #include "HealthComponent.h"
+#include "Levels/Level.h"
+#include "ScoreComponent.h"
 
 const std::string& HitDamageComponent::ID()
 {
@@ -39,6 +42,11 @@ void HitDamageComponent::Update()
     {
         mHealthComponentRef = GetOwnerComponent<HealthComponent>();
     }
+
+    if(mScoreComponentRef.expired())
+    {
+        mScoreComponentRef = GetOwnerComponent<ScoreComponent>();
+    }
 }
 
 void HitDamageComponent::OnCollision(int l, int r)
@@ -48,8 +56,15 @@ void HitDamageComponent::OnCollision(int l, int r)
         return;
     }
 
+    std::shared_ptr<HealthComponent> healthComponent = mHealthComponentRef.lock();
+    if(healthComponent->IsAlive() == false)
+    {
+        return;
+    }
+
     std::shared_ptr<CollisionBoxComponent> collisionBoxComponent = mCollisionBoxComponentRef.lock();
-    std::optional<int> colliderId                                = collisionBoxComponent->ColliderId();
+
+    std::optional<int> colliderId = collisionBoxComponent->ColliderId();
 
     if(colliderId.has_value() == false)
     {
@@ -60,4 +75,44 @@ void HitDamageComponent::OnCollision(int l, int r)
     {
         mHealthComponentRef.lock()->Decrement();
     }
+    else
+    {
+        return;
+    }
+
+    if(mScoreComponentRef.expired() || mOwnerRef.expired())
+    {
+        return;
+    }
+
+    std::shared_ptr<ScoreComponent> scoreComponent = mScoreComponentRef.lock();
+    GameObjectShared owner                         = mOwnerRef.lock();
+
+    if(healthComponent->IsAlive())
+    {
+        owner->GameLevel().UpdateScore(ScoreComponent::DefaultScore());
+    }
+    else
+    {
+        owner->GameLevel().UpdateScore(scoreComponent->ScoreValue());
+    }
+}
+
+void HitDamageComponent::DebugHit()
+{
+    if(mCollisionBoxComponentRef.expired())
+    {
+        return;
+    }
+
+    std::shared_ptr<CollisionBoxComponent> collisionBoxComponent = mCollisionBoxComponentRef.lock();
+
+    std::optional<int> colliderId = collisionBoxComponent->ColliderId();
+
+    if(colliderId.has_value() == false)
+    {
+        return;
+    }
+
+    OnCollision(*colliderId, 0);
 }

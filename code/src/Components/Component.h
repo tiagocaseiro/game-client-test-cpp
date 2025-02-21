@@ -21,7 +21,7 @@ using ComponentInitFunc         = std::function<std::shared_ptr<Component>(GameO
 using ComponentsInitData        = std::unordered_map<std::string, std::vector<ComponentInitFunc>>;
 using ComponentShared           = std::shared_ptr<Component>;
 
-class Component
+class Component : public std::enable_shared_from_this<Component>
 {
 public:
     Component(GameObjectRef owner, King::Engine& engine);
@@ -40,7 +40,7 @@ public:
     }
 
     template <typename T>
-    std::weak_ptr<T> GetOwnerComponent()
+    std::shared_ptr<T> GetOwnerComponent()
     {
         if(mOwnerRef.expired())
         {
@@ -50,7 +50,13 @@ public:
         return mOwnerRef.lock()->FindComponent<T>();
     }
 
+    template <typename T>
+    std::shared_ptr<T> Cast()
+    {
+        return std::dynamic_pointer_cast<T>(shared_from_this());
+    }
+
 protected:
-    const GameObjectRef mOwnerRef;
+    GameObjectRef mOwnerRef;
     King::Engine& mEngine;
 };

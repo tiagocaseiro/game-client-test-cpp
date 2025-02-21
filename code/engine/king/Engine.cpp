@@ -20,10 +20,10 @@
 
 namespace King
 {
-static const int WindowWidth = 1280;
-static const int WindowHeight = 960;
+static const int WindowWidth     = 1280;
+static const int WindowHeight    = 960;
 static const float MaxFrameTicks = 300.0f;
-static const float TextScale = 0.5f;
+static const float TextScale     = 0.5f;
 
 struct Engine::EngineImplementation
 {
@@ -44,10 +44,16 @@ struct Engine::EngineImplementation
     bool mQuit;
 
     EngineImplementation()
-        : mSdl(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE), mSdlWindow(WindowWidth, WindowHeight),
-          mTextureManager(mSdlWindow), mElapsedTicks(static_cast<float>(SDL_GetTicks())),
-          mLastFrameSeconds(1.0f / 60.0f), mUpdater(nullptr), mMouseX(WindowWidth * 0.5f), mMouseY(WindowHeight * 0.5f),
-          mMouseButtonDown(false), mQuit(false)
+        : mSdl(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE),
+          mSdlWindow(WindowWidth, WindowHeight),
+          mTextureManager(mSdlWindow),
+          mElapsedTicks(static_cast<float>(SDL_GetTicks())),
+          mLastFrameSeconds(1.0f / 60.0f),
+          mUpdater(nullptr),
+          mMouseX(WindowWidth * 0.5f),
+          mMouseY(WindowHeight * 0.5f),
+          mMouseButtonDown(false),
+          mQuit(false)
     {
         for(int i = 0; i < 256; ++i)
         {
@@ -108,6 +114,15 @@ bool Engine::GetKeyDown(int keyCode) const
         return false;
     }
     return mPimpl->mKeyStates[keyCode];
+}
+
+bool Engine::GetKeyUp(int keyCode) const
+{
+    if(keyCode < 0 || keyCode > 255)
+    {
+        return false;
+    }
+    return mPimpl->mKeyStates[keyCode] == false;
 }
 
 void Engine::SetCursorVisible(bool visible)
@@ -235,11 +250,11 @@ void Engine::EngineImplementation::Start()
         SDL_GL_SwapWindow(mSdlWindow);
         ParseEvents();
 
-        float currentTicks = static_cast<float>(SDL_GetTicks());
+        float currentTicks   = static_cast<float>(SDL_GetTicks());
         float lastFrameTicks = currentTicks - mElapsedTicks;
-        mElapsedTicks = currentTicks;
+        mElapsedTicks        = currentTicks;
 
-        lastFrameTicks = std::min(lastFrameTicks, MaxFrameTicks);
+        lastFrameTicks    = std::min(lastFrameTicks, MaxFrameTicks);
         mLastFrameSeconds = lastFrameTicks * 0.001f;
 
         mCollisionWorld.ProcessCollisions(mLastFrameSeconds);

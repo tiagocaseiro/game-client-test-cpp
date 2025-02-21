@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <map>
+#include <set>
 
 #include "Game/GameObject.h"
 
@@ -46,14 +47,16 @@ public:
     }
 
     void Reset();
-    void AddBrick(const glm::vec2& position, Brick::BrickType type, int hitPoints = 1);
+    // void AddBrick(const glm::vec2& position, Brick::BrickType type, int hitPoints = 1);
     void AddBrick(const GameObjectShared& brick);
+    void MarkForDeath(const GameObjectShared& gameObject);
     void Render();
     void Update();
-
+    void UpdateScore(int score);
     int NumBricksLeft() const;
 
-    void DestroyAllBricks();
+    void DebugDestroyAllBricks();
+    void DebugDamageFirstBrick();
 
     // CollisionListener
     void OnCollision(int l, int r) override;
@@ -66,7 +69,12 @@ private:
 
     std::vector<GameObjectShared> mBricks;
 
+    std::set<GameObjectShared> mGameObjectsToDelete;
+
     std::string mName;
     std::string mLevelBackground;
     std::string mNextLevelFilename;
 };
+
+using LevelShared = std::shared_ptr<Level>;
+using LevelRef    = std::weak_ptr<Level>;

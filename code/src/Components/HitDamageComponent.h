@@ -8,6 +8,7 @@
 
 class CollisionBoxComponent;
 class HealthComponent;
+class ScoreComponent;
 
 class HitDamageComponent : public Component, King::CollisionWorld::CollisionListener
 {
@@ -21,9 +22,13 @@ public:
     void Update() override;
     void OnCollision(int l, int r) override;
 
+    // For debug purposes
+    void DebugHit();
+
 private:
     HitDamageComponent(GameObjectRef owner, King::Engine& engine);
 
     std::weak_ptr<CollisionBoxComponent> mCollisionBoxComponentRef;
     std::weak_ptr<HealthComponent> mHealthComponentRef;
+    std::weak_ptr<ScoreComponent> mScoreComponentRef;
 };

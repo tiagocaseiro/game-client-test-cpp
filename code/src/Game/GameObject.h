@@ -3,42 +3,54 @@
 #include <memory>
 #include <vector>
 
-class Component;
+#include <king/Engine.h>
 
-class GameObject
+class Component;
+class Level;
+
+class GameObject final : public std::enable_shared_from_this<GameObject>
 {
 public:
+    //~GameObject();
     template <typename T>
-    std::enable_if_t<std::is_base_of_v<Component, T>, std::weak_ptr<T>> FindComponent()
+    std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> FindComponent()
     {
         for(std::shared_ptr<Component>& component : mComponents)
         {
-            if(auto derived = std::dynamic_pointer_cast<T>(component))
+            if(component == nullptr)
+            {
+                return nullptr;
+            }
+
+            if(auto derived = component->Cast<T>())
             {
                 return derived;
             }
         }
-        return std::weak_ptr<T>();
+        return nullptr;
     }
-
-    void AddComponent(std::shared_ptr<Component>);
 
     template <typename T>
     std::enable_if_t<std::is_base_of_v<Component, T>, bool> HasComponent()
     {
-        std::weak_ptr<Component> componentRef = FindComponent<T>();
-
-        return componentRef.expired() == false;
+        return FindComponent<T>() != nullptr;
     }
+
+    void AddComponent(std::shared_ptr<Component>);
+    void MarkForDeath();
+
+    Level& GameLevel();
 
     const std::vector<std::shared_ptr<Component>> Components() const;
 
 private:
-    GameObject() = default;
+    GameObject(Level& level);
 
     std::vector<std::shared_ptr<Component>> mComponents;
 
     friend class LevelLoader;
+
+    Level& mLevel;
 };
 
 using GameObjectRef    = std::weak_ptr<GameObject>;

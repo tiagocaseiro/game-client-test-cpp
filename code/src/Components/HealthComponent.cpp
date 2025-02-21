@@ -34,7 +34,10 @@ void HealthComponent::Decrement(const u32 dec)
 
     if(IsAlive() == false)
     {
-        return;
+        if(std::shared_ptr<GameObject> mOwner = mOwnerRef.lock())
+        {
+            mOwner->MarkForDeath();
+        }
     }
 
     GameObjectShared owner = mOwnerRef.lock();
