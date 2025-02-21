@@ -9,6 +9,8 @@
 #include <sstream>
 #include <string>
 
+#include "Components/TransformComponent.h"
+
 namespace
 {
 bool StartsWith(const std::string& text, const std::string& start)
@@ -99,19 +101,19 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                 continue;
             }
 
-            if(StartsWith(line, "paddles="))
-            {
-                std::string id;
-                std::getline(levelFile, id);
+            // if(StartsWith(line, "paddles="))
+            //{
+            //     std::string id;
+            //     std::getline(levelFile, id);
 
-                if(std::shared_ptr<GameObject> gameObject = std::shared_ptr<GameObject>(new GameObject))
-                {
-                    for(const ComponentInitFunc& initFunc : componentsInitData.at(id))
-                    {
-                        gameObject->AddComponent(initFunc(gameObject));
-                    }
-                }
-            }
+            //    if(std::shared_ptr<GameObject> gameObject = std::shared_ptr<GameObject>(new GameObject))
+            //    {
+            //        for(const ComponentInitFunc& initFunc : componentsInitData.at(id))
+            //        {
+            //            gameObject->AddComponent(initFunc(gameObject));
+            //        }
+            //    }
+            //}
 
             if(StartsWith(line, "tiles="))
             {
@@ -125,7 +127,27 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                         brickPos.x = float(x * kBrickWidth);
                         brickPos.y = float(y * kBrickHeight);
 
-                        ParseBlockChar(row[0], level.get(), brickPos);
+                        std::string brickType = row.substr(0, 1);
+                        if(std::shared_ptr<GameObject> brick = std::shared_ptr<GameObject>(new GameObject()))
+                        {
+                            auto it = componentsInitData.find(brickType);
+                            if(it == std::end(componentsInitData))
+                            {
+                                continue;
+                            }
+                            for(const auto& componentInitFunc : componentsInitData.at(brickType))
+                            {
+                                std::shared_ptr<Component> newComponent = componentInitFunc(brick);
+                                if(std::shared_ptr<TransformComponent> transformComponent =
+                                       std::dynamic_pointer_cast<TransformComponent>(newComponent))
+                                {
+                                    transformComponent->SetPosition({x, y});
+                                }
+                                brick->AddComponent(newComponent);
+                            }
+                            level->AddBrick(brick);
+                        }
+
                         x++;
                     }
                     x = 0;

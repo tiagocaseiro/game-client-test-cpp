@@ -28,14 +28,18 @@ public:
 
     virtual ~Component() = default;
 
+    virtual void Render();
+    virtual void Update();
+
     template <typename T>
     static std::pair<std::string, ComponentInternalInitFunc> InitData()
     {
         static_assert(std::is_base_of_v<Component, T>, "Type T must be derived from Component class");
+
         return std::pair(T::ID(), T::MakeComponent);
     }
 
-private:
+protected:
     const GameObjectRef mOwner;
     King::Engine& mEngine;
 };

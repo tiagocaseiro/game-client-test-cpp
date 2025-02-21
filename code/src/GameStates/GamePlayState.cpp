@@ -10,19 +10,27 @@
 #include "Components/Component.h"
 #include "Components/HealthComponent.h"
 #include "Components/SpriteComponent.h"
+#include "Components/TransformComponent.h"
 
 ComponentsInitData sComponentsInitData;
 
 std::unordered_map<std::string, ComponentInternalInitFunc> sComponentTypesInitFuncs = {
-    Component::InitData<SpriteComponent>(), Component::InitData<HealthComponent>()};
+    Component::InitData<SpriteComponent>(),
+    Component::InitData<HealthComponent>(),
+    Component::InitData<TransformComponent>(),
+};
 bool StartsWith(const std::string& text, const std::string& start)
 {
     return (text.find(start) == 0);
 }
 
 GamePlayState::GamePlayState(King::Engine& engine, GameEndedFunction gameEndedFunction)
-    : mEngine(engine), mGameEndedFunction(gameEndedFunction), mBGTx(mEngine.LoadTexture("Background-01.png")),
-      mPanelTx(mEngine.LoadTexture("Panel.png")), mTextFrameTx(mEngine.LoadTexture("Text-frame.png")), mScore(0)
+    : mEngine(engine),
+      mGameEndedFunction(gameEndedFunction),
+      mBGTx(mEngine.LoadTexture("Background-01.png")),
+      mPanelTx(mEngine.LoadTexture("Panel.png")),
+      mTextFrameTx(mEngine.LoadTexture("Text-frame.png")),
+      mScore(0)
 {
     mEngine.GetCollisionWorld().AddCollisionListener(*this);
 }
@@ -59,8 +67,8 @@ void ReadGameConfig(King::Engine& engine)
         if(StartsWith(line, "componentStart=") && currentComponentsInitFuncs)
         {
             currentComponentInternalInitFunc = nullptr;
-            std::string componentName = line.substr(15);
-            auto it                   = sComponentTypesInitFuncs.find(componentName);
+            std::string componentName        = line.substr(15);
+            auto it                          = sComponentTypesInitFuncs.find(componentName);
             if(it != std::end(sComponentTypesInitFuncs))
             {
                 ComponentInternalInitFunc initFunc = it->second;
@@ -174,6 +182,7 @@ void GamePlayState::Update()
     }
     mPaddle->Update();
     mBall->Update();
+    mLevel->Update();
 }
 
 void GamePlayState::Render()

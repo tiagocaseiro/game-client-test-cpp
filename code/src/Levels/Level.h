@@ -47,28 +47,24 @@ public:
 
     void Reset();
     void AddBrick(const glm::vec2& position, Brick::BrickType type, int hitPoints = 1);
+    void AddBrick(const GameObjectShared& brick);
     void Render();
-    int NumBricksLeft() const
-    {
-        return mNumBricksLeft;
-    }
+    void Update();
+
+    int NumBricksLeft() const;
 
     void DestroyAllBricks();
 
     // CollisionListener
     void OnCollision(int l, int r) override;
 
-    void AddPaddle(GameObjectShared gameObject);
-
 private:
     King::Engine& mEngine;
     ScoreReportingFunction mScoreReportingFunction;
-    std::map<int, Brick> mBricks;
-    int mNumBricksLeft;
+    // std::map<int, Brick> mBricks;
+    // int mNumBricksLeft;
 
-    std::vector<GameObjectShared> mNewPaddles;
-    std::vector<GameObjectShared> mNewBricks;
-    std::vector<GameObjectShared> mNewPowerUps;
+    std::vector<GameObjectShared> mBricks;
 
     std::string mName;
     std::string mLevelBackground;

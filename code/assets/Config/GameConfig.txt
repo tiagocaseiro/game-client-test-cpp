@@ -1,33 +1,3 @@
-id=paddle1
-
-componentStart=SpriteComponent
-parameter=Paddle.png
-componentEnd=
-
-componentStart=HealthComponent
-parameter=3
-componentEnd=
-
-componentStart=InputMovementComponent
-parameter=mouse
-componentEnd=
-
-componentStart=BoxCollisionComponent
-componentEnd=
-
-id=EnlargePowerUp
-
-componentStart=SpriteComponent
-parameter=Paddle.png
-
-componentStart=ScaleHitComponent 
-parameter=2
-parameter=1
-paramater=1
-parameter=10000 
-parameter=player
-componentEnd=
-
 id=c
 
 componentStart=SpriteComponent
@@ -39,12 +9,11 @@ componentStart=HealthComponent
 parameter=2
 componentEnd=
 
-componentStart=BoxCollisionComponent
-componentEnd=
-
-componentStart=MultipleHitScoreComponent
-parameter=10
-parameter=200
+componentStart=TransformComponent
+parameter=0
+parameter=0
+parameter=1
+parameter=2
 componentEnd=
 
 

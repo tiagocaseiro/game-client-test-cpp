@@ -1,6 +1,9 @@
 #pragma once
 
+#include <optional>
+
 #include "Component.h"
+#include "TransformComponent.h"
 
 class GameObject;
 
@@ -18,8 +21,13 @@ public:
                                          const std::vector<std::string>& parameters);
 
 private:
+    void Render() override;
+    void Update() override;
+
     SpriteComponent(GameObjectRef owner, King::Engine& engine, std::vector<int> textureHandles);
 
 public:
+    std::weak_ptr<TransformComponent> mTransformComponentRef;
     const std::vector<int> mTextureHandles;
+    std::optional<int> mActiveTextureHandle;
 };

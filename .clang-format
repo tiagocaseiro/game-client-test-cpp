@@ -12,3 +12,5 @@ BraceWrapping:
 AllowShortLambdasOnASingleLine: None
 AlwaysBreakTemplateDeclarations: Yes
 AlignConsecutiveAssignments: Consecutive
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ 
