@@ -8,10 +8,13 @@
 #include <SDL.h>
 
 #include "Components/Component.h"
+#include "Components/HealthComponent.h"
 #include "Components/SpriteComponent.h"
 
 ComponentsInitData sComponentsInitData;
 
+std::unordered_map<std::string, ComponentInternalInitFunc> sComponentTypesInitFuncs = {
+    Component::InitData<SpriteComponent>(), Component::InitData<HealthComponent>()};
 bool StartsWith(const std::string& text, const std::string& start)
 {
     return (text.find(start) == 0);
@@ -31,46 +34,54 @@ void ReadGameConfig(King::Engine& engine)
     {
         return;
     }
+    ComponentInternalInitFunc currentComponentInternalInitFunc = nullptr;
+    std::vector<ComponentInitFunc>* currentComponentsInitFuncs = nullptr;
+    std::vector<std::string> currentParameters                 = {};
+
     std::string line;
-    std::vector<ComponentInitFunc>* currentComponentInitFuncs = nullptr;
-    ComponentInternalInitFunc currentComponentInternalInitFunc;
-    std::vector<std::string> currentParameters;
     while(std::getline(configFile, line))
     {
         if(StartsWith(line, "id="))
         {
             currentComponentInternalInitFunc = nullptr;
+            currentComponentsInitFuncs       = nullptr;
             currentParameters.clear();
             auto it = sComponentsInitData.emplace(line.substr(3), std::vector<ComponentInitFunc>{});
 
             const bool emplaced = it.second;
             if(emplaced)
             {
-                currentComponentInitFuncs = &it.first->second;
+                currentComponentsInitFuncs = &it.first->second;
             }
             continue;
         }
 
-        if(StartsWith(line, "component=") && currentComponentInitFuncs)
+        if(StartsWith(line, "componentStart=") && currentComponentsInitFuncs)
         {
+            currentComponentInternalInitFunc = nullptr;
+            std::string componentName = line.substr(15);
+            auto it                   = sComponentTypesInitFuncs.find(componentName);
+            if(it != std::end(sComponentTypesInitFuncs))
+            {
+                ComponentInternalInitFunc initFunc = it->second;
+                currentComponentInternalInitFunc   = initFunc;
+                continue;
+            }
 
-            currentComponentInitFuncs->emplace_back([currentParameters, currentComponentInternalInitFunc,
-                                                     &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
+            continue;
+        }
+
+        if(StartsWith(line, "componentEnd=") && currentComponentsInitFuncs)
+        {
+            currentComponentsInitFuncs->emplace_back([currentParameters, currentComponentInternalInitFunc,
+                                                      &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
                 if(currentComponentInternalInitFunc)
                 {
                     return currentComponentInternalInitFunc(owner, engine, currentParameters);
                 }
                 return nullptr;
             });
-
             currentParameters.clear();
-            std::string componentName = line.substr(10);
-            if(componentName == SpriteComponent::ID())
-            {
-                currentComponentInternalInitFunc = &SpriteComponent::MakeComponent;
-            }
-
-            continue;
         }
 
         if(StartsWith(line, "parameter="))
