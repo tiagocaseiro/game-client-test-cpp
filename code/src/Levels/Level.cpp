@@ -64,7 +64,7 @@ void Level::OnCollision(int l, int r)
         return;
     }
 
-    auto brickIt = brickIt1 != mBricks.end() ? brickIt1 : brickIt2;
+    auto brickIt   = brickIt1 != mBricks.end() ? brickIt1 : brickIt2;
     auto idOfBrick = brickIt == brickIt1 ? l : r;
 
     brickIt->second.OnHit();
@@ -79,4 +79,9 @@ void Level::OnCollision(int l, int r)
     {
         mScoreReportingFunction(10); // 10 points for hitting a brick no matter the type
     }
+}
+
+void Level::AddPaddle(GameObjectShared gameObject)
+{
+    mNewPaddles.emplace_back(gameObject);
 }

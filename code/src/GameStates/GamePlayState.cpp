@@ -2,7 +2,20 @@
 #include "GamePlayState.h"
 #include "Levels/LevelLoader.h"
 
+#include <fstream>
+#include <iostream>
+
 #include <SDL.h>
+
+#include "Components/Component.h"
+#include "Components/SpriteComponent.h"
+
+ComponentsInitData sComponentsInitData;
+
+bool StartsWith(const std::string& text, const std::string& start)
+{
+    return (text.find(start) == 0);
+}
 
 GamePlayState::GamePlayState(King::Engine& engine, GameEndedFunction gameEndedFunction)
     : mEngine(engine), mGameEndedFunction(gameEndedFunction), mBGTx(mEngine.LoadTexture("Background-01.png")),
@@ -11,10 +24,69 @@ GamePlayState::GamePlayState(King::Engine& engine, GameEndedFunction gameEndedFu
     mEngine.GetCollisionWorld().AddCollisionListener(*this);
 }
 
+void ReadGameConfig(King::Engine& engine)
+{
+    std::ifstream configFile("./assets/Config/GameConfig.txt");
+    if(configFile.is_open() == false)
+    {
+        return;
+    }
+    std::string line;
+    std::vector<ComponentInitFunc>* currentComponentInitFuncs = nullptr;
+    ComponentInternalInitFunc currentComponentInternalInitFunc;
+    std::vector<std::string> currentParameters;
+    while(std::getline(configFile, line))
+    {
+        if(StartsWith(line, "id="))
+        {
+            currentComponentInternalInitFunc = nullptr;
+            currentParameters.clear();
+            auto it = sComponentsInitData.emplace(line.substr(3), std::vector<ComponentInitFunc>{});
+
+            const bool emplaced = it.second;
+            if(emplaced)
+            {
+                currentComponentInitFuncs = &it.first->second;
+            }
+            continue;
+        }
+
+        if(StartsWith(line, "component=") && currentComponentInitFuncs)
+        {
+
+            currentComponentInitFuncs->emplace_back([currentParameters, currentComponentInternalInitFunc,
+                                                     &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
+                if(currentComponentInternalInitFunc)
+                {
+                    return currentComponentInternalInitFunc(owner, engine, currentParameters);
+                }
+                return nullptr;
+            });
+
+            currentParameters.clear();
+            std::string componentName = line.substr(10);
+            if(componentName == SpriteComponent::ID())
+            {
+                currentComponentInternalInitFunc = &SpriteComponent::MakeComponent;
+            }
+
+            continue;
+        }
+
+        if(StartsWith(line, "parameter=1"))
+        {
+            currentParameters.emplace_back(line.substr(10));
+            continue;
+        }
+    }
+}
+
 void GamePlayState::Start()
 {
+    ReadGameConfig(mEngine);
+
     mNumBallsLeft = 3;
-    mLevelClear = false;
+    mLevelClear   = false;
 
     mEngine.GetCollisionWorld().ClearAll();
 
@@ -30,7 +102,7 @@ void GamePlayState::Start()
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2);
     mColliders.push_back(mIdOfBottomCollider);
 
-    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, [&](int score) {
+    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, sComponentsInitData, [this](int score) {
         mScore += score;
     });
 
@@ -127,7 +199,7 @@ void GamePlayState::RenderUI()
 void GamePlayState::RenderUIIndicator(int y, std::string title, std::string text)
 {
     const int panelX = 1036;
-    const int textX = panelX + 16;
+    const int textX  = panelX + 16;
 
     mEngine.Write(title.c_str(), panelX, y);
     y += 24;
@@ -138,7 +210,7 @@ void GamePlayState::RenderUIIndicator(int y, std::string title, std::string text
 
 void GamePlayState::OnCollision(int l, int r)
 {
-    bool hitBottom = l == mIdOfBottomCollider || r == mIdOfBottomCollider;
+    bool hitBottom    = l == mIdOfBottomCollider || r == mIdOfBottomCollider;
     bool oneIsTheBall = l == mBall->ColliderId() || r == mBall->ColliderId();
     if(hitBottom && !mLevelClear && oneIsTheBall)
     {

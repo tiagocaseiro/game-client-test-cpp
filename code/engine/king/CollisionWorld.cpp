@@ -287,7 +287,7 @@ void CollisionWorld::ProcessCollisions(float dt)
                     (*sphereColliderIter).second.mPosition = result.mPoint;
                     direction = ReflectVector(direction, result.mNormal);
                     rigidbody->mMovement = direction * movement;
-                    NotifyCollission(result.mId, collider);
+                    NotifyCollision(result.mId, collider);
                 }
 
                 if(distanceToMove > 0)
@@ -405,7 +405,7 @@ void CollisionWorld::ProcessCollisions(float dt)
 
     for(const auto& collision : collisions)
     {
-        NotifyCollission(collision.first, collision.second);
+        NotifyCollision(collision.first, collision.second);
     }
 }
 
@@ -444,7 +444,7 @@ void CollisionWorld::ClearAll()
     mAllColliders.clear();
 }
 
-void CollisionWorld::NotifyCollission(int l, int r)
+void CollisionWorld::NotifyCollision(int l, int r)
 {
     for(auto listener : mListeners)
     {

@@ -1,6 +1,8 @@
 Title=Barcelona-01
 Background=Background-01.png
 NextLevelFile=./assets/Levels/Level2.txt
+paddles=
+paddle1
 tiles=
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

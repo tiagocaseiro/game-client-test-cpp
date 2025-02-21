@@ -11,3 +11,4 @@ BraceWrapping:
   AfterCaseLabel: true
 AllowShortLambdasOnASingleLine: None
 AlwaysBreakTemplateDeclarations: Yes
+AlignConsecutiveAssignments: Consecutive

@@ -54,20 +54,21 @@ void ParseBlockChar(char c, Level* level, const glm::vec2& brickPos)
     }
     else if(c == 'p')
     {
-        assert(false && "Unknown type of brick!");
+        level->AddBrick(brickPos, Brick::BRICK_PINK);
     }
 }
 } // namespace
 
 std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King::Engine& engine,
+                                              const ComponentsInitData& componentsInitData,
                                               Level::ScoreReportingFunction scoreReportingFunction)
 {
     std::unique_ptr<Level> level = std::make_unique<Level>(engine, scoreReportingFunction);
     level->Reset();
 
-    std::string levelTitle = "Untitled";
+    std::string levelTitle      = "Untitled";
     std::string levelBackground = "Background-01.png";
-    std::string nextLevelFilename = "";
+    std::string nextLevelFilename;
 
     std::ifstream levelFile(levelName);
 
@@ -96,6 +97,20 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
             {
                 nextLevelFilename = line.substr(14);
                 continue;
+            }
+
+            if(StartsWith(line, "paddles="))
+            {
+                std::string id;
+                std::getline(levelFile, id);
+
+                if(std::shared_ptr<GameObject> gameObject = std::shared_ptr<GameObject>(new GameObject))
+                {
+                    for(const ComponentInitFunc& initFunc : componentsInitData.at(id))
+                    {
+                        gameObject->AddComponent(initFunc(gameObject));
+                    }
+                }
             }
 
             if(StartsWith(line, "tiles="))

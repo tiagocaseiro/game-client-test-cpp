@@ -47,7 +47,7 @@ public:
     void RemoveRigidBody(RigidBody* rigidbody);
     void ClearAll();
 
-    void NotifyCollission(int l, int r);
+    void NotifyCollision(int l, int r);
     void AddCollisionListener(CollisionListener& listener);
     void RemoveCollisionListener(CollisionListener& listener);
     void ClearCollisionListeners();

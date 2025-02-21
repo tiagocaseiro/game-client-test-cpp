@@ -10,6 +10,8 @@
 #include <functional>
 #include <map>
 
+#include "Game/GameObject.h"
+
 class Level : King::CollisionWorld::CollisionListener
 {
 public:
@@ -56,11 +58,17 @@ public:
     // CollisionListener
     void OnCollision(int l, int r) override;
 
+    void AddPaddle(GameObjectShared gameObject);
+
 private:
     King::Engine& mEngine;
     ScoreReportingFunction mScoreReportingFunction;
     std::map<int, Brick> mBricks;
     int mNumBricksLeft;
+
+    std::vector<GameObjectShared> mNewPaddles;
+    std::vector<GameObjectShared> mNewBricks;
+    std::vector<GameObjectShared> mNewPowerUps;
 
     std::string mName;
     std::string mLevelBackground;
