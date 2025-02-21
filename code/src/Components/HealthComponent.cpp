@@ -1,4 +1,5 @@
 #include "HealthComponent.h"
+#include "SpriteComponent.h"
 
 const std::string& HealthComponent::ID()
 {
@@ -7,7 +8,7 @@ const std::string& HealthComponent::ID()
 }
 
 HealthComponent::HealthComponent(GameObjectRef owner, King::Engine& engine, const u32 maxHealth)
-    : Component(owner, engine), mHealth(maxHealth)
+    : Component(owner, engine), mHealth(maxHealth), mMaxHealth(maxHealth)
 {
 }
 
@@ -33,6 +34,20 @@ void HealthComponent::DecrementHealth(const u32 dec)
         return;
     }
     mHealth -= dec;
+
+    GameObjectShared owner = mOwnerRef.lock();
+
+    if(owner == nullptr)
+    {
+        return;
+    }
+
+    std::weak_ptr<SpriteComponent> spriteComponentRef = owner->FindComponent<SpriteComponent>();
+
+    if(std::shared_ptr<SpriteComponent> spriteComponent = spriteComponentRef.lock())
+    {
+        spriteComponent->SetActiveTextureHandle(mMaxHealth - mHealth);
+    }
 }
 
 bool HealthComponent::IsAlive() const

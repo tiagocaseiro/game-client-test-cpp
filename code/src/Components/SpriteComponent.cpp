@@ -65,9 +65,19 @@ void SpriteComponent::Update()
         return;
     }
 
-    if(mOwner.expired())
+    if(mOwnerRef.expired())
     {
         return;
     }
-    mTransformComponentRef = mOwner.lock()->FindComponent<TransformComponent>();
+    mTransformComponentRef = mOwnerRef.lock()->FindComponent<TransformComponent>();
+}
+
+void SpriteComponent::SetActiveTextureHandle(size_t index)
+{
+    if(index >= mTextureHandles.size())
+    {
+        return;
+    }
+
+    mActiveTextureHandle = mTextureHandles[index];
 }

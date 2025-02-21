@@ -17,4 +17,5 @@ public:
 private:
     HealthComponent(GameObjectRef owner, King::Engine& engine, const u32 dec);
     u32 mHealth;
+    const u32 mMaxHealth;
 };

@@ -20,13 +20,15 @@ public:
     static ComponentShared MakeComponent(GameObjectRef owner, King::Engine& engine,
                                          const std::vector<std::string>& parameters);
 
+    void SetActiveTextureHandle(size_t index);
+
 private:
     void Render() override;
     void Update() override;
 
     SpriteComponent(GameObjectRef owner, King::Engine& engine, std::vector<int> textureHandles);
 
-public:
+private:
     std::weak_ptr<TransformComponent> mTransformComponentRef;
     const std::vector<int> mTextureHandles;
     std::optional<int> mActiveTextureHandle;

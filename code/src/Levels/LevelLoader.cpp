@@ -101,20 +101,6 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                 continue;
             }
 
-            // if(StartsWith(line, "paddles="))
-            //{
-            //     std::string id;
-            //     std::getline(levelFile, id);
-
-            //    if(std::shared_ptr<GameObject> gameObject = std::shared_ptr<GameObject>(new GameObject))
-            //    {
-            //        for(const ComponentInitFunc& initFunc : componentsInitData.at(id))
-            //        {
-            //            gameObject->AddComponent(initFunc(gameObject));
-            //        }
-            //    }
-            //}
-
             if(StartsWith(line, "tiles="))
             {
                 // Tiles must be the last thing in the level file
@@ -141,7 +127,7 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                                 if(std::shared_ptr<TransformComponent> transformComponent =
                                        std::dynamic_pointer_cast<TransformComponent>(newComponent))
                                 {
-                                    transformComponent->SetPosition({x, y});
+                                    transformComponent->SetPosition(brickPos);
                                 }
                                 brick->AddComponent(newComponent);
                             }

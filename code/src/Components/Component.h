@@ -40,6 +40,6 @@ public:
     }
 
 protected:
-    const GameObjectRef mOwner;
+    const GameObjectRef mOwnerRef;
     King::Engine& mEngine;
 };

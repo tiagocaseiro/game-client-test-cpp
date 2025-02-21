@@ -1,8 +1,8 @@
 id=c
 
 componentStart=SpriteComponent
-parameter=BrickcomponentStart=grey.png
-parameter=BrickcomponentStart=greycomponentStart=broken.png
+parameter=Brick-grey.png
+parameter=Brick-grey-broken.png
 componentEnd=
 
 componentStart=HealthComponent
@@ -12,7 +12,7 @@ componentEnd=
 componentStart=TransformComponent
 parameter=0
 parameter=0
-parameter=1
+parameter=0
 parameter=2
 componentEnd=
 
