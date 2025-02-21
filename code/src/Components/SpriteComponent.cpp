@@ -28,9 +28,11 @@ ComponentShared SpriteComponent::MakeComponent(GameObjectRef owner, King::Engine
 
     for(auto& [parameterId, texturePath] : parameters)
     {
-        textureHandles.push_back(engine.LoadTexture(texturePath.c_str()));
+        if(parameterId.find("sprite") != std::string::npos)
+        {
+            textureHandles.push_back(engine.LoadTexture(texturePath.c_str()));
+        }
     }
-
     return std::shared_ptr<Component>(new SpriteComponent(owner, engine, textureHandles));
 }
 

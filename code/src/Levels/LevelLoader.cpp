@@ -140,6 +140,7 @@ void LevelLoader::LoadBrick(const ComponentsInitData& componentsInitData, const 
         auto it = componentsInitData.find(brickType);
         if(it == std::end(componentsInitData))
         {
+            x++;
             return;
         }
         for(const auto& componentInitFunc : componentsInitData.at(brickType))

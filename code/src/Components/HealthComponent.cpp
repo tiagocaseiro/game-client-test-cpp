@@ -46,9 +46,7 @@ void HealthComponent::Decrement(const u32 dec)
         return;
     }
 
-    std::weak_ptr<SpriteComponent> spriteComponentRef = owner->FindComponent<SpriteComponent>();
-
-    if(std::shared_ptr<SpriteComponent> spriteComponent = spriteComponentRef.lock())
+    if(std::shared_ptr<SpriteComponent> spriteComponent = owner->FindComponent<SpriteComponent>())
     {
         spriteComponent->SetActiveTextureHandle(mMaxHealth - mHealth);
     }

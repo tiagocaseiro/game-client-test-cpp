@@ -121,16 +121,20 @@ void Level::DebugDamageFirstBrick()
         return;
     }
 
-    GameObjectShared first = mBricks.front();
-
-    if(first == nullptr)
+    for(GameObjectShared& brick : mBricks)
     {
-        return;
-    }
+        if(brick == nullptr)
+        {
+            continue;
+        }
+        std::shared_ptr<HitDamageComponent> hitDamageComponent = brick->FindComponent<HitDamageComponent>();
+        std::shared_ptr<HealthComponent> healthDamageComponent = brick->FindComponent<HealthComponent>();
 
-    if(std::shared_ptr<HitDamageComponent> hitDamageComponent = first->FindComponent<HitDamageComponent>())
-    {
-        hitDamageComponent->DebugHit();
+        if(hitDamageComponent && healthDamageComponent)
+        {
+            hitDamageComponent->DebugHit();
+            return;
+        }
     }
 }
 
