@@ -9,6 +9,7 @@
 #include <sstream>
 #include <string>
 
+#include "Components/CollisionComponent.h"
 #include "Components/TransformComponent.h"
 
 namespace
@@ -110,31 +111,7 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                     std::string row;
                     while(std::getline(lineStream, row, ','))
                     {
-                        brickPos.x = float(x * kBrickWidth);
-                        brickPos.y = float(y * kBrickHeight);
-
-                        std::string brickType = row.substr(0, 1);
-                        if(std::shared_ptr<GameObject> brick = std::shared_ptr<GameObject>(new GameObject()))
-                        {
-                            auto it = componentsInitData.find(brickType);
-                            if(it == std::end(componentsInitData))
-                            {
-                                continue;
-                            }
-                            for(const auto& componentInitFunc : componentsInitData.at(brickType))
-                            {
-                                std::shared_ptr<Component> newComponent = componentInitFunc(brick);
-                                if(std::shared_ptr<TransformComponent> transformComponent =
-                                       std::dynamic_pointer_cast<TransformComponent>(newComponent))
-                                {
-                                    transformComponent->SetPosition(brickPos);
-                                }
-                                brick->AddComponent(newComponent);
-                            }
-                            level->AddBrick(brick);
-                        }
-
-                        x++;
+                        LoadBrick(componentsInitData, row, *level, brickPos, x, y);
                     }
                     x = 0;
                     y++;
@@ -149,4 +126,43 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
     level->SetNextLevelFilename(nextLevelFilename);
 
     return level;
+}
+
+void LevelLoader::LoadBrick(const ComponentsInitData& componentsInitData, const std::string& row, Level& level,
+                            glm::vec2& brickPos, int& x, int& y)
+{
+    brickPos.x = float(x * kBrickWidth);
+    brickPos.y = float(y * kBrickHeight);
+
+    std::string brickType = row.substr(0, 1);
+    if(std::shared_ptr<GameObject> brick = std::shared_ptr<GameObject>(new GameObject()))
+    {
+        auto it = componentsInitData.find(brickType);
+        if(it == std::end(componentsInitData))
+        {
+            return;
+        }
+        for(const auto& componentInitFunc : componentsInitData.at(brickType))
+        {
+            std::shared_ptr<Component> newComponent = componentInitFunc(brick);
+
+            // Set Brick instance transform data
+            if(std::shared_ptr<TransformComponent> transformComponent =
+                   std::dynamic_pointer_cast<TransformComponent>(newComponent))
+            {
+                transformComponent->SetPosition(brickPos);
+            }
+            // Set Brick instance collision box data
+            else if(std::shared_ptr<CollisionBoxComponent> collisionBoxComponent =
+                        std::dynamic_pointer_cast<CollisionBoxComponent>(newComponent))
+            {
+                collisionBoxComponent->UpdateData(brickPos, {kBrickWidth, kBrickHeight});
+            }
+
+            brick->AddComponent(newComponent);
+        }
+        level.AddBrick(brick);
+    }
+
+    x++;
 }

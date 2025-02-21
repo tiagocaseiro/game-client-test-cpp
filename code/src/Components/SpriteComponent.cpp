@@ -21,17 +21,12 @@ const std::string& SpriteComponent::ID()
 }
 
 ComponentShared SpriteComponent::MakeComponent(GameObjectRef owner, King::Engine& engine,
-                                               const std::vector<std::string>& parameters)
+                                               const std::unordered_map<std::string, std::string>& parameters)
 {
-    if(parameters.empty())
-    {
-        return nullptr;
-    }
-
     std::vector<int> textureHandles;
     textureHandles.reserve(parameters.size());
 
-    for(const std::string& texturePath : parameters)
+    for(auto& [parameterId, texturePath] : parameters)
     {
         textureHandles.push_back(engine.LoadTexture(texturePath.c_str()));
     }

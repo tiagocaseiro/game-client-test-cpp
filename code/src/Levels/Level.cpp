@@ -85,10 +85,6 @@ int Level::NumBricksLeft() const
 
 void Level::DestroyAllBricks()
 {
-    // for(auto brickPair : mBricks)
-    //{
-    //     mEngine.GetCollisionWorld().RemoveBoxCollider(brickPair.first);
-    // }
     mBricks.clear();
 }
 

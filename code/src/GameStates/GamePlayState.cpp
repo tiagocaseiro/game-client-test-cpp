@@ -7,6 +7,7 @@
 
 #include <SDL.h>
 
+#include "Components/CollisionComponent.h"
 #include "Components/Component.h"
 #include "Components/HealthComponent.h"
 #include "Components/SpriteComponent.h"
@@ -14,11 +15,16 @@
 
 ComponentsInitData sComponentsInitData;
 
+// clang-format off
 std::unordered_map<std::string, ComponentInternalInitFunc> sComponentTypesInitFuncs = {
-    Component::InitData<SpriteComponent>(),
+    Component::InitData<SpriteComponent>(),          
     Component::InitData<HealthComponent>(),
-    Component::InitData<TransformComponent>(),
+    Component::InitData<TransformComponent>(),       
+    Component::InitData<CollisionBoxComponent>(),
+    //Component::InitData<CollisionCircleComponent>()
 };
+// clang-format on
+
 bool StartsWith(const std::string& text, const std::string& start)
 {
     return (text.find(start) == 0);
@@ -42,9 +48,9 @@ void ReadGameConfig(King::Engine& engine)
     {
         return;
     }
-    ComponentInternalInitFunc currentComponentInternalInitFunc = nullptr;
-    std::vector<ComponentInitFunc>* currentComponentsInitFuncs = nullptr;
-    std::vector<std::string> currentParameters                 = {};
+    ComponentInternalInitFunc currentComponentInternalInitFunc     = nullptr;
+    std::vector<ComponentInitFunc>* currentComponentsInitFuncs     = nullptr;
+    std::unordered_map<std::string, std::string> currentParameters = {};
 
     std::string line;
     while(std::getline(configFile, line))
@@ -89,12 +95,18 @@ void ReadGameConfig(King::Engine& engine)
                 }
                 return nullptr;
             });
+
             currentParameters.clear();
+            continue;
         }
 
-        if(StartsWith(line, "parameter="))
+        auto parameterSeparatorIndex = line.find_first_of('=');
+        if(parameterSeparatorIndex != std::string::npos)
         {
-            currentParameters.emplace_back(line.substr(10));
+            auto name = line.substr(0, parameterSeparatorIndex);
+            parameterSeparatorIndex++;
+            auto value = line.substr(parameterSeparatorIndex);
+            currentParameters.emplace(name, value);
             continue;
         }
     }

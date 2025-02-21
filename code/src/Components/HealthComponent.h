@@ -9,7 +9,7 @@ class HealthComponent : public Component
 public:
     static const std::string& ID();
     static ComponentShared MakeComponent(GameObjectRef owner, King::Engine& engine,
-                                         const std::vector<std::string>& parameters);
+                                         const std::unordered_map<std::string, std::string>& parameters);
 
     void DecrementHealth(const u32 dec);
     bool IsAlive() const;

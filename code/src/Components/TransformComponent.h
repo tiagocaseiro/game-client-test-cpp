@@ -9,7 +9,7 @@ class TransformComponent : public Component
 public:
     static const std::string& ID();
     static ComponentShared MakeComponent(GameObjectRef owner, King::Engine& engine,
-                                         const std::vector<std::string>& parameters);
+                                         const std::unordered_map<std::string, std::string>& parameters);
     void SetPosition(const glm::vec2 position);
     void SetRotation(const float rotation);
     void SetScale(const float scale);

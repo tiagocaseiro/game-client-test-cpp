@@ -1,21 +1,26 @@
 id=c
 
 componentStart=SpriteComponent
-parameter=Brick-grey.png
-parameter=Brick-grey-broken.png
+sprite1=Brick-grey.png
+sprite2=Brick-grey-broken.png
 componentEnd=
 
 componentStart=HealthComponent
-parameter=2
+maxHealth=2
 componentEnd=
 
 componentStart=TransformComponent
-parameter=0
-parameter=0
-parameter=0
-parameter=2
+scale=2
 componentEnd=
 
+componentStart=CollisionBoxComponent
+width=64;
+height=32;
+componentEnd=
+
+componentStart=DamageComponent
+default=10
+componentEnd=
 
 id=r
 

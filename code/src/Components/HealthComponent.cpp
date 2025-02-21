@@ -13,14 +13,15 @@ HealthComponent::HealthComponent(GameObjectRef owner, King::Engine& engine, cons
 }
 
 ComponentShared HealthComponent::MakeComponent(GameObjectRef owner, King::Engine& engine,
-                                               const std::vector<std::string>& parameters)
+                                               const std::unordered_map<std::string, std::string>& parameters)
 {
-    if(parameters.empty())
+    auto it = parameters.find("maxHealth");
+    if(it == std::end(parameters))
     {
         return nullptr;
     }
 
-    const u32 maxHealth = std::stoi(parameters.front());
+    const u32 maxHealth = std::stoi(it->second);
 
     return std::shared_ptr<Component>(new HealthComponent(owner, engine, maxHealth));
 }

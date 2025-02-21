@@ -7,19 +7,32 @@ const std::string& TransformComponent::ID()
 }
 
 ComponentShared TransformComponent::MakeComponent(GameObjectRef owner, King::Engine& engine,
-                                                  const std::vector<std::string>& parameters)
+                                                  const std::unordered_map<std::string, std::string>& parameters)
 {
-    if(parameters.size() < 4)
+    glm::vec2 position = {};
+    float rotation     = 0.0f;
+    float scale        = 1.0f;
+
+    if(auto it = parameters.find("posX"); it != std::end(parameters))
     {
-        return std::shared_ptr<Component>(new TransformComponent(owner, engine));
+        position.x = std::stof(it->second);
+    }
+    if(auto it = parameters.find("posY"); it != std::end(parameters))
+    {
+        position.y = std::stof(it->second);
     }
 
-    float x        = std::stof(parameters.at(0));
-    float y        = std::stof(parameters.at(1));
-    float rotation = std::stof(parameters.at(2));
-    float scale    = std::stof(parameters.at(3));
+    if(auto it = parameters.find("rotation"); it != std::end(parameters))
+    {
+        rotation = std::stof(it->second);
+    }
 
-    return std::shared_ptr<Component>(new TransformComponent(owner, engine, glm::vec2{x, y}, rotation, scale));
+    if(auto it = parameters.find("scale"); it != std::end(parameters))
+    {
+        scale = std::stof(it->second);
+    }
+
+    return std::shared_ptr<Component>(new TransformComponent(owner, engine, position, rotation, scale));
 }
 
 TransformComponent::TransformComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2 position,
