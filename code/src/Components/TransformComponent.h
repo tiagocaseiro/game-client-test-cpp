@@ -4,7 +4,7 @@
 
 #include "Component.h"
 
-class TransformComponent : public Component
+class TransformComponent final : public Component
 {
 public:
     static const std::string& ID();

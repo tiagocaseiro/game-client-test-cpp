@@ -13,6 +13,7 @@ namespace King
 class Engine;
 }
 
+class Level;
 class Component;
 
 using ComponentInternalInitFunc = std::function<std::shared_ptr<Component>(
@@ -30,6 +31,7 @@ public:
 
     virtual void Render();
     virtual void Update();
+    virtual void OnDestroyed();
 
     template <typename T>
     static std::pair<std::string, ComponentInternalInitFunc> InitData()

@@ -52,7 +52,7 @@ public:
     void MarkForDeath(const GameObjectShared& gameObject);
     void Render();
     void Update();
-    void UpdateScore(int score);
+    void UpdateScore(int score) const;
     int NumBricksLeft() const;
 
     void DebugDestroyAllBricks();

@@ -18,12 +18,17 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=200
 componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
+componentEnd=
+
 
 id=r
 
@@ -43,10 +48,10 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
  
@@ -68,10 +73,10 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
 
@@ -93,10 +98,10 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
 
@@ -115,10 +120,11 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnCollisionComponent
+score=10
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
 id=g
@@ -139,10 +145,10 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
 
@@ -165,11 +171,15 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
+componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
 componentEnd=
 
 id=2
@@ -193,12 +203,17 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
+componentEnd=
+
 
 id=3
 
@@ -221,12 +236,17 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
+componentEnd=
+
 
 id=4
 
@@ -250,11 +270,15 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
+componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
 componentEnd=
 
 id=5
@@ -280,12 +304,17 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
+componentEnd=
+
 
 id=6
 
@@ -311,12 +340,17 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
+componentEnd=
+
 
 id=7
 
@@ -343,12 +377,17 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=10
+componentEnd=
+
 
 id=v
 
@@ -368,10 +407,10 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
 
@@ -393,9 +432,9 @@ width=64;
 height=32;
 componentEnd=
 
-componentStart=HitDamageComponent
+componentStart=DamageOnCollisionComponent
 componentEnd=
 
-componentStart=ScoreComponent
+componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=

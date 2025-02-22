@@ -2,7 +2,7 @@
 
 #include "Component.h"
 
-class HealthComponent : public Component
+class HealthComponent final : public Component
 {
     using u32 = size_t;
 

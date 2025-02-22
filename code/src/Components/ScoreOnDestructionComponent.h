@@ -1,26 +1,30 @@
 #pragma once
 
-#include <king/CollisionWorld.h>
-
-#include "glm/vec2.hpp"
+#include <optional>
 
 #include "Component.h"
+#include "TransformComponent.h"
 
-class CollisionBoxComponent;
-class HealthComponent;
+class GameObject;
 
-class ScoreComponent : public Component
+namespace King
 {
+class Engine;
+}
+
+class ScoreOnDestructionComponent final : public Component
+{
+
 public:
     static const std::string& ID();
     static ComponentShared MakeComponent(GameObjectRef owner, King::Engine& engine,
                                          const std::unordered_map<std::string, std::string>& parameters);
-    static int DefaultScore();
-
-    int ScoreValue() const;
 
 private:
-    ScoreComponent(GameObjectRef owner, King::Engine& engine, const int score);
+    void OnDestroyed() override;
 
+    ScoreOnDestructionComponent(GameObjectRef owner, King::Engine& engine, const int score);
+
+private:
     const int mScore;
 };

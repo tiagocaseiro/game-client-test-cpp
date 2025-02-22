@@ -6,7 +6,7 @@
 
 #include "Component.h"
 
-class CollisionBoxComponent : public Component
+class CollisionBoxComponent final : public Component
 {
 public:
     static const std::string& ID();

@@ -2,7 +2,6 @@
 #include "Level.h"
 
 #include "Components/HealthComponent.h"
-#include "Components/HitDamageComponent.h"
 
 Level::Level(King::Engine& engine, ScoreReportingFunction scoreReportingFunction)
     : mEngine(engine), mScoreReportingFunction(scoreReportingFunction)
@@ -94,10 +93,21 @@ void Level::Update()
         it++;
     }
 
+    for(const GameObjectShared& gameObject : mGameObjectsToDelete)
+    {
+        for(const ComponentShared& component : gameObject->Components())
+        {
+            if(component)
+            {
+                component->OnDestroyed();
+            }
+        }
+    }
+
     mGameObjectsToDelete.clear();
 }
 
-void Level::UpdateScore(int score)
+void Level::UpdateScore(int score) const
 {
     mScoreReportingFunction(score);
 }
@@ -127,14 +137,14 @@ void Level::DebugDamageFirstBrick()
         {
             continue;
         }
-        std::shared_ptr<HitDamageComponent> hitDamageComponent = brick->FindComponent<HitDamageComponent>();
-        std::shared_ptr<HealthComponent> healthDamageComponent = brick->FindComponent<HealthComponent>();
+        // std::shared_ptr<HitDamageComponent> hitDamageComponent = brick->FindComponent<HitDamageComponent>();
+        // std::shared_ptr<HealthComponent> healthDamageComponent = brick->FindComponent<HealthComponent>();
 
-        if(hitDamageComponent && healthDamageComponent)
-        {
-            hitDamageComponent->DebugHit();
-            return;
-        }
+        // if(hitDamageComponent && healthDamageComponent)
+        //{
+        //     hitDamageComponent->DebugHit();
+        //     return;
+        // }
     }
 }
 

@@ -12,7 +12,7 @@ namespace King
 class Engine;
 }
 
-class SpriteComponent : public Component
+class SpriteComponent final : public Component
 {
 
 public:
