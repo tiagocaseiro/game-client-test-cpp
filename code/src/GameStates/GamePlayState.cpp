@@ -19,20 +19,6 @@
 
 ComponentsInitData sComponentsInitData;
 
-// clang-format off
-std::unordered_map<std::string, ComponentInternalInitFunc> sComponentTypesInitFuncs = {
-    Component::InitData<SpriteComponent>(),          
-    Component::InitData<HealthComponent>(),
-    Component::InitData<TransformComponent>(),       
-    Component::InitData<CollisionBoxComponent>(),
-    //Component::InitData<CollisionCircleComponent>()
-    Component::InitData<DamageOnCollisionComponent>(),
-    Component::InitData<ScoreOnCollisionComponent>(),
-    Component::InitData<ScoreOnDestructionComponent>(),
-      Component::InitData<SpawnGameObjectOnDestructionComponent>()
-};
-// clang-format on
-
 bool StartsWith(const std::string& text, const std::string& start)
 {
     return (text.find(start) == 0);
@@ -82,8 +68,8 @@ void ReadGameConfig(King::Engine& engine)
         {
             currentComponentInternalInitFunc = nullptr;
             std::string componentName        = line.substr(15);
-            auto it                          = sComponentTypesInitFuncs.find(componentName);
-            if(it != std::end(sComponentTypesInitFuncs))
+            auto it                          = GetComponentInitFuncs().find(componentName);
+            if(it != std::end(GetComponentInitFuncs()))
             {
                 ComponentInternalInitFunc initFunc = it->second;
                 currentComponentInternalInitFunc   = initFunc;
