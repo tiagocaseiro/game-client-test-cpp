@@ -15,7 +15,7 @@ componentEnd=
 
 componentStart=CollisionBoxComponent
 width=64;
-height=32;
+height=32
 componentEnd=
 
 componentStart=DamageOnCollisionComponent
@@ -439,3 +439,5 @@ componentEnd=
 componentStart=SpawnGameObjectOnDestructionComponent
 type=shrinkPowerup
 componentEnd=
+
+shrinkPowerup=
