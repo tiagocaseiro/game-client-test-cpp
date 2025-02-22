@@ -19,7 +19,7 @@ public:
         {
             if(component == nullptr)
             {
-                return continue;
+                continue;
             }
 
             if(auto derived = component->Cast<T>())
