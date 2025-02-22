@@ -124,9 +124,6 @@ componentStart=ScoreOnCollisionComponent
 score=10
 componentEnd=
 
-componentStart=DamageOnCollisionComponent
-componentEnd=
-
 id=g
 
 componentStart=SpriteComponent

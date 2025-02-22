@@ -1,7 +1,10 @@
 // (C) king.com Ltd 2021
 #include "Level.h"
 
+#include "Components/CollisionComponent.h"
+#include "Components/DamageOnCollisionComponent.h"
 #include "Components/HealthComponent.h"
+#include "Components/ScoreOnCollisionComponent.h"
 
 Level::Level(King::Engine& engine, ScoreReportingFunction scoreReportingFunction)
     : mEngine(engine), mScoreReportingFunction(scoreReportingFunction)
@@ -137,14 +140,37 @@ void Level::DebugDamageFirstBrick()
         {
             continue;
         }
-        // std::shared_ptr<HitDamageComponent> hitDamageComponent = brick->FindComponent<HitDamageComponent>();
-        // std::shared_ptr<HealthComponent> healthDamageComponent = brick->FindComponent<HealthComponent>();
 
-        // if(hitDamageComponent && healthDamageComponent)
-        //{
-        //     hitDamageComponent->DebugHit();
-        //     return;
-        // }
+        std::shared_ptr<CollisionBoxComponent> collisionComponent = brick->FindComponent<CollisionBoxComponent>();
+        if(collisionComponent == nullptr)
+        {
+            continue;
+        }
+
+        std::optional<int> colliderId = collisionComponent->ColliderId();
+        if(colliderId.has_value() == false)
+        {
+            continue;
+        }
+
+        bool isToReturn = false;
+
+        if(std::shared_ptr<DamageOnCollisionComponent> damageOnCollisionComponent =
+               brick->FindComponent<DamageOnCollisionComponent>())
+        {
+            isToReturn = true;
+            damageOnCollisionComponent->OnCollision(*colliderId, *colliderId);
+        }
+
+        if(std::shared_ptr<ScoreOnCollisionComponent> scoreOnCollisionComponent =
+               brick->FindComponent<ScoreOnCollisionComponent>())
+        {
+            scoreOnCollisionComponent->OnCollision(*colliderId, *colliderId);
+        }
+        if(isToReturn)
+        {
+            return;
+        }
     }
 }
 
