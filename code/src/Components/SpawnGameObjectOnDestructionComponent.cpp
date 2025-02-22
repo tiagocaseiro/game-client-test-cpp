@@ -20,7 +20,7 @@ const std::string& SpawnGameObjectOnDestructionComponent::ID()
 }
 
 ComponentShared SpawnGameObjectOnDestructionComponent::MakeComponent(
-    GameObjectRef owner, King::Engine& engine, const std::unordered_map<std::string, std::string>& parameters)
+    GameObjectRef owner, King::Engine& engine, const std::unordered_map<std::string, std::string>& /*parameters*/)
 {
     return std::shared_ptr<Component>(new SpawnGameObjectOnDestructionComponent(owner, engine));
 }

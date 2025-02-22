@@ -37,7 +37,7 @@ GamePlayState::GamePlayState(King::Engine& engine, GameEndedFunction gameEndedFu
 
 void ReadGameConfig(King::Engine& engine)
 {
-    std::ifstream configFile("./assets/Config/GameConfig.txt");
+    std::ifstream configFile("./assets/Config/GameObjectTemplates.txt");
     if(configFile.is_open() == false)
     {
         return;

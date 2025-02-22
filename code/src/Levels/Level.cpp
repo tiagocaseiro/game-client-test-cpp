@@ -43,11 +43,7 @@ void Level::AddBrick(const GameObjectShared& brick)
 
 void Level::MarkForDeath(const GameObjectShared& gameObject)
 {
-    auto it = std::find(std::begin(mBricks), std::end(mBricks), gameObject);
-    if(it != std::end(mBricks))
-    {
-        mGameObjectsToDelete.emplace(*it);
-    }
+    mGameObjectsToDelete.emplace(gameObject);
 }
 
 void Level::Render()
