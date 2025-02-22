@@ -42,17 +42,16 @@ void ReadGameConfig(King::Engine& engine)
     {
         return;
     }
-    ComponentInitFunc currentComponentInitFunc                     = nullptr;
-    GameObjectTemplate* gameObjectTemplate                         = nullptr;
-    std::unordered_map<std::string, std::string> currentParameters = {};
-
+    GameObjectTemplate* gameObjectTemplate = nullptr;
+    ComponentInitFunc currentComponentInitFunc;
+    std::string componentName;
+    std::unordered_map<std::string, std::string> currentParameters;
     std::string line;
     while(std::getline(configFile, line))
     {
         if(StartsWith(line, "id="))
         {
             currentComponentInitFunc = nullptr;
-            gameObjectTemplate       = nullptr;
             currentParameters.clear();
             auto it = sGameObjectTemplates.emplace(line.substr(3), GameObjectTemplate{});
 
@@ -64,11 +63,34 @@ void ReadGameConfig(King::Engine& engine)
             continue;
         }
 
-        if(StartsWith(line, "componentStart=") && gameObjectTemplate)
+        if(gameObjectTemplate == nullptr)
         {
-            currentComponentInitFunc  = nullptr;
-            std::string componentName = line.substr(15);
-            auto it                   = GetComponentInitFuncs().find(componentName);
+            continue;
+        }
+
+        if(StartsWith(line, "parent="))
+        {
+            std::string parentGameObjectTemplateName = line.substr(7);
+
+            auto it = sGameObjectTemplates.find(parentGameObjectTemplateName);
+
+            if(it == std::end(sGameObjectTemplates))
+            {
+                continue;
+            }
+
+            const GameObjectTemplate& parentGameObjectTemplate = it->second;
+
+            *gameObjectTemplate = parentGameObjectTemplate;
+
+            continue;
+        }
+
+        if(StartsWith(line, "componentStart="))
+        {
+            currentComponentInitFunc = nullptr;
+            componentName            = line.substr(15);
+            auto it                  = GetComponentInitFuncs().find(componentName);
             if(it != std::end(GetComponentInitFuncs()))
             {
                 ComponentInitFunc initFunc = it->second;
@@ -79,16 +101,26 @@ void ReadGameConfig(King::Engine& engine)
             continue;
         }
 
-        if(StartsWith(line, "componentEnd=") && gameObjectTemplate)
+        if(StartsWith(line, "componentEnd="))
         {
-            gameObjectTemplate->emplace_back([currentParameters, currentComponentInitFunc,
-                                              &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
+            auto initFunc = [currentParameters, currentComponentInitFunc,
+                             &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
                 if(currentComponentInitFunc)
                 {
                     return currentComponentInitFunc(owner, engine, currentParameters);
                 }
                 return nullptr;
-            });
+            };
+
+            auto it = gameObjectTemplate->find(componentName);
+            if(it == std::end(*gameObjectTemplate))
+            {
+                gameObjectTemplate->emplace(componentName, initFunc);
+            }
+            else
+            {
+                it->second = initFunc;
+            }
 
             currentParameters.clear();
             continue;

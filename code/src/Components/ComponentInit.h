@@ -16,7 +16,8 @@ namespace King
 using ComponentParameters = std::unordered_map<std::string, std::string>;
 using ComponentInitFunc =
     std::function<std::shared_ptr<Component>(std::weak_ptr<GameObject>, King::Engine&, const ComponentParameters&)>;
-using GameObjectTemplate  = std::vector<std::function<std::shared_ptr<Component>(std::weak_ptr<GameObject>)>>;
+using GameObjectTemplate =
+    std::unordered_map<std::string, std::function<std::shared_ptr<Component>(std::weak_ptr<GameObject>)>>;
 using GameObjectTemplates = std::unordered_map<std::string, GameObjectTemplate>;
 
 using ComponentShared = std::shared_ptr<Component>;

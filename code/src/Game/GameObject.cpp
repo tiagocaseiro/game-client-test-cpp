@@ -17,8 +17,9 @@ GameObjectShared GameObject::MakeGameObject(Level& level, const GameObjectTempla
         return nullptr;
     }
 
-    for(const auto& componentInitFunc : gameObjectTemplate)
+    for(const auto& componentInitData : gameObjectTemplate)
     {
+        const std::function<ComponentShared(GameObjectRef)>& componentInitFunc = componentInitData.second;
         gameObject->AddComponent(componentInitFunc(gameObject));
     }
 
