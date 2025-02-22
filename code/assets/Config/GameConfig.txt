@@ -435,3 +435,7 @@ componentEnd=
 componentStart=ScoreOnDestructionComponent
 score=100
 componentEnd=
+
+componentStart=SpawnGameObjectOnDestructionComponent
+type=shrinkPowerup
+componentEnd=
