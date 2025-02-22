@@ -54,14 +54,8 @@ void SpriteComponent::Render()
                    transformComponent->GetRotation(), transformComponent->GetScale());
 }
 
-void SpriteComponent::Update()
+void SpriteComponent::OnCreate()
 {
-
-    if(mTransformComponentRef.expired() == false)
-    {
-        return;
-    }
-
     mTransformComponentRef = GetOwnerComponent<TransformComponent>();
 }
 

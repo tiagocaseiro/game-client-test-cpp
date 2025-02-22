@@ -7,11 +7,19 @@ Component::Component(GameObjectRef owner, King::Engine& engine) : mOwnerRef(owne
 {
 }
 
+void Component::OnCreate()
+{
+}
+
 void Component::Render()
 {
 }
 
 void Component::Update()
+{
+}
+
+void Component::OnComponentAdded(std::shared_ptr<Component>)
 {
 }
 

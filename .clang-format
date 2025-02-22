@@ -13,4 +13,5 @@ AllowShortLambdasOnASingleLine: None
 AlwaysBreakTemplateDeclarations: Yes
 AlignConsecutiveAssignments: Consecutive
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
- 
+NamespaceIndentation: All
+

@@ -22,12 +22,14 @@ public:
 
     virtual ~Component() = default;
 
+    virtual void OnCreate();
     virtual void Render();
     virtual void Update();
     virtual void OnDestroyed();
+    virtual void OnComponentAdded(std::shared_ptr<Component>);
 
     template <typename T>
-    static std::pair<std::string, ComponentInternalInitFunc> InitData()
+    static std::pair<std::string, ComponentInitFunc> InitData()
     {
         static_assert(std::is_base_of_v<Component, T>, "Type T must be derived from Component class");
 

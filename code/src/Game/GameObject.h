@@ -5,13 +5,25 @@
 
 #include <king/Engine.h>
 
+#include "Components/ComponentInit.h"
+
 class Component;
 class Level;
+class GameObject;
+
+namespace King
+{
+    class Engine;
+}
+
+using GameObjectRef    = std::weak_ptr<GameObject>;
+using GameObjectShared = std::shared_ptr<GameObject>;
 
 class GameObject final : public std::enable_shared_from_this<GameObject>
 {
 public:
-    //~GameObject();
+    static GameObjectShared MakeGameObject(Level& level, const GameObjectTemplate& gameObjectTemplate);
+
     template <typename T>
     std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> FindComponent()
     {
@@ -39,7 +51,7 @@ public:
     void AddComponent(std::shared_ptr<Component>);
     void MarkForDeath();
 
-    Level& GameLevel();
+    const Level& GameLevel();
 
     const std::vector<std::shared_ptr<Component>> Components() const;
 
@@ -48,10 +60,5 @@ private:
 
     std::vector<std::shared_ptr<Component>> mComponents;
 
-    friend class LevelLoader;
-
     Level& mLevel;
 };
-
-using GameObjectRef    = std::weak_ptr<GameObject>;
-using GameObjectShared = std::shared_ptr<GameObject>;

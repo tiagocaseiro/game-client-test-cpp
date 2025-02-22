@@ -19,7 +19,7 @@ public:
 
     ~DamageOnCollisionComponent();
 
-    void Update() override;
+    void OnCreate() override;
     void OnCollision(int l, int r) override;
 
     // For debug purposes

@@ -17,7 +17,7 @@
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
 
-ComponentsInitData sComponentsInitData;
+GameObjectTemplates sGameObjectTemplates;
 
 bool StartsWith(const std::string& text, const std::string& start)
 {
@@ -42,8 +42,8 @@ void ReadGameConfig(King::Engine& engine)
     {
         return;
     }
-    ComponentInternalInitFunc currentComponentInternalInitFunc     = nullptr;
-    std::vector<ComponentInitFunc>* currentComponentsInitFuncs     = nullptr;
+    ComponentInitFunc currentComponentInitFunc                     = nullptr;
+    GameObjectTemplate* gameObjectTemplate                         = nullptr;
     std::unordered_map<std::string, std::string> currentParameters = {};
 
     std::string line;
@@ -51,41 +51,41 @@ void ReadGameConfig(King::Engine& engine)
     {
         if(StartsWith(line, "id="))
         {
-            currentComponentInternalInitFunc = nullptr;
-            currentComponentsInitFuncs       = nullptr;
+            currentComponentInitFunc = nullptr;
+            gameObjectTemplate       = nullptr;
             currentParameters.clear();
-            auto it = sComponentsInitData.emplace(line.substr(3), std::vector<ComponentInitFunc>{});
+            auto it = sGameObjectTemplates.emplace(line.substr(3), GameObjectTemplate{});
 
             const bool emplaced = it.second;
             if(emplaced)
             {
-                currentComponentsInitFuncs = &it.first->second;
+                gameObjectTemplate = &it.first->second;
             }
             continue;
         }
 
-        if(StartsWith(line, "componentStart=") && currentComponentsInitFuncs)
+        if(StartsWith(line, "componentStart=") && gameObjectTemplate)
         {
-            currentComponentInternalInitFunc = nullptr;
-            std::string componentName        = line.substr(15);
-            auto it                          = GetComponentInitFuncs().find(componentName);
+            currentComponentInitFunc  = nullptr;
+            std::string componentName = line.substr(15);
+            auto it                   = GetComponentInitFuncs().find(componentName);
             if(it != std::end(GetComponentInitFuncs()))
             {
-                ComponentInternalInitFunc initFunc = it->second;
-                currentComponentInternalInitFunc   = initFunc;
+                ComponentInitFunc initFunc = it->second;
+                currentComponentInitFunc   = initFunc;
                 continue;
             }
 
             continue;
         }
 
-        if(StartsWith(line, "componentEnd=") && currentComponentsInitFuncs)
+        if(StartsWith(line, "componentEnd=") && gameObjectTemplate)
         {
-            currentComponentsInitFuncs->emplace_back([currentParameters, currentComponentInternalInitFunc,
-                                                      &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
-                if(currentComponentInternalInitFunc)
+            gameObjectTemplate->emplace_back([currentParameters, currentComponentInitFunc,
+                                              &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
+                if(currentComponentInitFunc)
                 {
-                    return currentComponentInternalInitFunc(owner, engine, currentParameters);
+                    return currentComponentInitFunc(owner, engine, currentParameters);
                 }
                 return nullptr;
             });
@@ -127,7 +127,7 @@ void GamePlayState::Start()
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2);
     mColliders.push_back(mIdOfBottomCollider);
 
-    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, sComponentsInitData, [this](int score) {
+    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, sGameObjectTemplates, [this](int score) {
         mScore += score;
     });
 
@@ -234,11 +234,11 @@ void GamePlayState::RenderUIIndicator(int y, std::string title, std::string text
     const int panelX = 1036;
     const int textX  = panelX + 16;
 
-    mEngine.Write(title.c_str(), panelX, y);
+    mEngine.Write(title.c_str(), panelX, static_cast<float>(y));
     y += 24;
-    mEngine.Render(mTextFrameTx, panelX, y, 0, 4);
+    mEngine.Render(mTextFrameTx, panelX, static_cast<float>(y), 0, 4);
     y += 16;
-    mEngine.Write(text.c_str(), textX, y);
+    mEngine.Write(text.c_str(), textX, static_cast<float>(y));
 }
 
 void GamePlayState::OnCollision(int l, int r)

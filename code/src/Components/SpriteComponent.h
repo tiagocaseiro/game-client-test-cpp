@@ -9,7 +9,7 @@ class GameObject;
 
 namespace King
 {
-class Engine;
+    class Engine;
 }
 
 class SpriteComponent final : public Component
@@ -23,8 +23,8 @@ public:
     void SetActiveTextureHandle(size_t index);
 
 private:
+    void OnCreate() override;
     void Render() override;
-    void Update() override;
 
     SpriteComponent(GameObjectRef owner, King::Engine& engine, std::vector<int> textureHandles);
 

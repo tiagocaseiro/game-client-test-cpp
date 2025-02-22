@@ -11,10 +11,10 @@
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
 
-const std::unordered_map<std::string, ComponentInternalInitFunc>& GetComponentInitFuncs()
+const std::unordered_map<std::string, ComponentInitFunc>& GetComponentInitFuncs()
 {
     // clang-format off
-   static const std::unordered_map<std::string, ComponentInternalInitFunc> sComponentTypesInitFuncs = {
+   static const std::unordered_map<std::string, ComponentInitFunc> sComponentTypesInitFuncs = {
         Component::InitData<SpriteComponent>(),          
         Component::InitData<HealthComponent>(),
         Component::InitData<TransformComponent>(),       

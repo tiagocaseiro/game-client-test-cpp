@@ -21,17 +21,10 @@ ScoreOnCollisionComponent::~ScoreOnCollisionComponent()
     mEngine.GetCollisionWorld().RemoveCollisionListener(*this);
 }
 
-void ScoreOnCollisionComponent::Update()
+void ScoreOnCollisionComponent::OnCreate()
 {
-    if(mCollisionBoxComponentRef.expired())
-    {
-        mCollisionBoxComponentRef = GetOwnerComponent<CollisionBoxComponent>();
-    }
-
-    if(mHealthComponentRef.expired())
-    {
-        mHealthComponentRef = GetOwnerComponent<HealthComponent>();
-    }
+    mCollisionBoxComponentRef = GetOwnerComponent<CollisionBoxComponent>();
+    mHealthComponentRef       = GetOwnerComponent<HealthComponent>();
 }
 
 void ScoreOnCollisionComponent::OnCollision(int l, int r)
@@ -41,10 +34,10 @@ void ScoreOnCollisionComponent::OnCollision(int l, int r)
         return;
     }
 
-    std::optional<int> colliderId = mCollisionBoxComponentRef.lock()->ColliderId();
+    int colliderId = mCollisionBoxComponentRef.lock()->ColliderId();
 
     if((mHealthComponentRef.expired() || mHealthComponentRef.lock()->IsAlive()) && colliderId &&
-       (l == *colliderId || r == *colliderId))
+       (l == colliderId || r == colliderId))
     {
 
         mOwnerRef.lock()->GameLevel().UpdateScore(mScore);

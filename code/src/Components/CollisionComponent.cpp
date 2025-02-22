@@ -19,6 +19,7 @@ ComponentShared CollisionBoxComponent::MakeComponent(GameObjectRef owner, King::
     {
         position.x = std::stof(it->second);
     }
+
     if(auto it = parameters.find("posY"); it != std::end(parameters))
     {
         position.y = std::stof(it->second);
@@ -39,7 +40,7 @@ ComponentShared CollisionBoxComponent::MakeComponent(GameObjectRef owner, King::
 
 CollisionBoxComponent::CollisionBoxComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2 position,
                                              const glm::vec2 dimensions)
-    : Component(owner, engine), mPosition(position), mDimensions(dimensions)
+    : Component(owner, engine), mPosition(position), mDimensions(dimensions), mColliderId(0)
 {
     InitCollisionId();
 }
@@ -52,7 +53,7 @@ void CollisionBoxComponent::UpdateData(const glm::vec2 position, const glm::vec2
     InitCollisionId();
 }
 
-std::optional<int> CollisionBoxComponent::ColliderId() const
+int CollisionBoxComponent::ColliderId() const
 {
     return mColliderId;
 }
@@ -61,7 +62,7 @@ CollisionBoxComponent::~CollisionBoxComponent()
 {
     if(mColliderId)
     {
-        mEngine.GetCollisionWorld().RemoveBoxCollider(*mColliderId);
+        mEngine.GetCollisionWorld().RemoveBoxCollider(mColliderId);
     }
 }
 
@@ -69,8 +70,7 @@ void CollisionBoxComponent::InitCollisionId()
 {
     if(mColliderId)
     {
-        mEngine.GetCollisionWorld().RemoveBoxCollider(*mColliderId);
-        mColliderId = std::nullopt;
+        mEngine.GetCollisionWorld().RemoveBoxCollider(mColliderId);
     }
     mColliderId = mEngine.GetCollisionWorld().AddBoxCollider(mPosition, mDimensions, 1 << 1, 0);
 }

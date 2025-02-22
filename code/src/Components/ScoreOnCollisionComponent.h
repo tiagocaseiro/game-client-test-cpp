@@ -11,7 +11,7 @@ class CollisionBoxComponent;
 
 namespace King
 {
-class Engine;
+    class Engine;
 }
 
 class ScoreOnCollisionComponent final : public Component, King::CollisionWorld::CollisionListener
@@ -23,7 +23,7 @@ public:
                                          const std::unordered_map<std::string, std::string>& parameters);
     ~ScoreOnCollisionComponent();
 
-    void Update() override;
+    void OnCreate() override;
     void OnCollision(int l, int r) override;
 
 private:

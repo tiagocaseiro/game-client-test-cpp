@@ -30,17 +30,10 @@ DamageOnCollisionComponent::~DamageOnCollisionComponent()
     mEngine.GetCollisionWorld().RemoveCollisionListener(*this);
 }
 
-void DamageOnCollisionComponent::Update()
+void DamageOnCollisionComponent::OnCreate()
 {
-    if(mCollisionBoxComponentRef.expired())
-    {
-        mCollisionBoxComponentRef = GetOwnerComponent<CollisionBoxComponent>();
-    }
-
-    if(mHealthComponentRef.expired())
-    {
-        mHealthComponentRef = GetOwnerComponent<HealthComponent>();
-    }
+    mCollisionBoxComponentRef = GetOwnerComponent<CollisionBoxComponent>();
+    mHealthComponentRef       = GetOwnerComponent<HealthComponent>();
 }
 
 void DamageOnCollisionComponent::OnCollision(int l, int r)

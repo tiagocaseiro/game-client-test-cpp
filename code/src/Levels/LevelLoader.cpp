@@ -14,56 +14,56 @@
 
 namespace
 {
-bool StartsWith(const std::string& text, const std::string& start)
-{
-    return (text.find(start) == 0);
-}
-//
-// void ParseBlockChar(char c, Level* level, const glm::vec2& brickPos)
-//{
-//    if(c == 'r')
-//    {
-//        // Red block
-//        level->AddBrick(brickPos, Brick::BRICK_RED);
-//    }
-//    else if(c == 'g')
-//    {
-//        level->AddBrick(brickPos, Brick::BRICK_GREEN);
-//    }
-//    else if(c == 'b')
-//    {
-//        level->AddBrick(brickPos, Brick::BRICK_BLUE);
-//    }
-//    else if(c == 'o')
-//    {
-//        level->AddBrick(brickPos, Brick::BRICK_ORANGE);
-//    }
-//    else if(c == 'v')
-//    {
-//        level->AddBrick(brickPos, Brick::BRICK_GLASS);
-//    }
-//    else if(c == 'c')
-//    {
-//        level->AddBrick(brickPos, Brick::BRICK_GREY, 2);
-//    }
-//    else if(c == 's')
-//    {
-//        level->AddBrick(brickPos, Brick::BRICK_SOLID);
-//    }
-//    else if(c > '0' && c < '8')
-//    {
-//        int hitPoints = c - '0';
-//        level->AddBrick(brickPos, Brick::BRICK_COUNTER, hitPoints);
-//    }
-//    else if(c == 'p')
-//    {
-//        assert(false && "Unknown type of brick!");
-//    }
-//}
+    bool StartsWith(const std::string& text, const std::string& start)
+    {
+        return (text.find(start) == 0);
+    }
+    //
+    // void ParseBlockChar(char c, Level* level, const glm::vec2& brickPos)
+    //{
+    //    if(c == 'r')
+    //    {
+    //        // Red block
+    //        level->AddBrick(brickPos, Brick::BRICK_RED);
+    //    }
+    //    else if(c == 'g')
+    //    {
+    //        level->AddBrick(brickPos, Brick::BRICK_GREEN);
+    //    }
+    //    else if(c == 'b')
+    //    {
+    //        level->AddBrick(brickPos, Brick::BRICK_BLUE);
+    //    }
+    //    else if(c == 'o')
+    //    {
+    //        level->AddBrick(brickPos, Brick::BRICK_ORANGE);
+    //    }
+    //    else if(c == 'v')
+    //    {
+    //        level->AddBrick(brickPos, Brick::BRICK_GLASS);
+    //    }
+    //    else if(c == 'c')
+    //    {
+    //        level->AddBrick(brickPos, Brick::BRICK_GREY, 2);
+    //    }
+    //    else if(c == 's')
+    //    {
+    //        level->AddBrick(brickPos, Brick::BRICK_SOLID);
+    //    }
+    //    else if(c > '0' && c < '8')
+    //    {
+    //        int hitPoints = c - '0';
+    //        level->AddBrick(brickPos, Brick::BRICK_COUNTER, hitPoints);
+    //    }
+    //    else if(c == 'p')
+    //    {
+    //        assert(false && "Unknown type of brick!");
+    //    }
+    //}
 } // namespace
 
 std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King::Engine& engine,
-                                              const ComponentsInitData& componentsInitData,
+                                              const GameObjectTemplates& gameObjectTemplates,
                                               Level::ScoreReportingFunction scoreReportingFunction)
 {
     std::unique_ptr<Level> level = std::make_unique<Level>(engine, scoreReportingFunction);
@@ -111,7 +111,7 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                     std::string row;
                     while(std::getline(lineStream, row, ','))
                     {
-                        LoadBrick(componentsInitData, row, *level, brickPos, x, y);
+                        LoadBrick(gameObjectTemplates, row, *level, brickPos, x, y);
                     }
                     x = 0;
                     y++;
@@ -128,42 +128,37 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
     return level;
 }
 
-void LevelLoader::LoadBrick(const ComponentsInitData& componentsInitData, const std::string& row, Level& level,
+void LevelLoader::LoadBrick(const GameObjectTemplates& gameObjectTemplates, const std::string& row, Level& level,
                             glm::vec2& brickPos, int& x, int& y)
 {
     brickPos.x = float(x * kBrickWidth);
     brickPos.y = float(y * kBrickHeight);
 
     std::string brickType = row.substr(0, 1);
-    if(std::shared_ptr<GameObject> brick = std::shared_ptr<GameObject>(new GameObject(level)))
+
+    auto it = gameObjectTemplates.find(brickType);
+    if(it == std::end(gameObjectTemplates))
     {
-        auto it = componentsInitData.find(brickType);
-        if(it == std::end(componentsInitData))
-        {
-            x++;
-            return;
-        }
-        for(const auto& componentInitFunc : componentsInitData.at(brickType))
-        {
-            std::shared_ptr<Component> newComponent = componentInitFunc(brick);
-
-            // Set Brick instance transform data
-            if(std::shared_ptr<TransformComponent> transformComponent =
-                   std::dynamic_pointer_cast<TransformComponent>(newComponent))
-            {
-                transformComponent->SetPosition(brickPos);
-            }
-            // Set Brick instance collision box data
-            else if(std::shared_ptr<CollisionBoxComponent> collisionBoxComponent =
-                        std::dynamic_pointer_cast<CollisionBoxComponent>(newComponent))
-            {
-                collisionBoxComponent->UpdateData(brickPos, {kBrickWidth, kBrickHeight});
-            }
-
-            brick->AddComponent(newComponent);
-        }
-        level.AddBrick(brick);
+        x++;
+        return;
     }
 
+    std::shared_ptr<GameObject> brick = GameObject::MakeGameObject(level, it->second);
+    if(brick != nullptr)
+    {
+        level.AddBrick(brick);
+
+        // Set brick position
+        if(std::shared_ptr<TransformComponent> transformComponent = brick->FindComponent<TransformComponent>())
+        {
+            transformComponent->SetPosition(brickPos);
+        }
+
+        // Set brick collision box data
+        if(std::shared_ptr<CollisionBoxComponent> collisionBoxComponent = brick->FindComponent<CollisionBoxComponent>())
+        {
+            collisionBoxComponent->UpdateData(brickPos, {kBrickWidth, kBrickHeight});
+        }
+    }
     x++;
 }
