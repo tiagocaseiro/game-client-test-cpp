@@ -9,7 +9,7 @@ class GameObject;
 
 namespace King
 {
-class Engine;
+    class Engine;
 }
 
 class SpawnGameObjectOnDestructionComponent final : public Component
@@ -21,9 +21,15 @@ public:
                                          const std::unordered_map<std::string, std::string>& parameters);
 
 private:
+    void OnCreate() override;
     void OnDestroyed() override;
 
-    SpawnGameObjectOnDestructionComponent(GameObjectRef owner, King::Engine& engine);
+    SpawnGameObjectOnDestructionComponent(GameObjectRef owner, King::Engine& engine,
+                                          const std::string& gameObjectTemplateId, const glm::vec2& offset);
 
 private:
+    std::weak_ptr<TransformComponent> mTransformComponent;
+
+    const std::string mGameObjectTemplateId;
+    const glm::vec2 mOffset;
 };

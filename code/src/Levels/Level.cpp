@@ -9,36 +9,11 @@
 Level::Level(King::Engine& engine, ScoreReportingFunction scoreReportingFunction)
     : mEngine(engine), mScoreReportingFunction(scoreReportingFunction)
 {
-    mEngine.GetCollisionWorld().AddCollisionListener(*this);
 }
 
-Level::~Level()
+void Level::AddGameObject(const GameObjectShared& gameObject)
 {
-    mEngine.GetCollisionWorld().RemoveCollisionListener(*this);
-}
-
-void Level::Reset()
-{
-    // mNumBricksLeft = 0;
-}
-
-// void Level::AddBrick(const glm::vec2& /*position*/, Brick::BrickType /*type*/, int /*hitPoints*/)
-//{
-//  Brick brick(mEngine, position, hitPoints, type);
-//  int brickId = mEngine.GetCollisionWorld().AddBoxCollider(position, glm::vec2(kBrickWidth, kBrickHeight), 1 << 1,
-//  0);
-
-// mBricks.emplace(std::pair(brickId, std::move(brick)));
-
-// if(type != Brick::BRICK_SOLID)
-//{
-//     mNumBricksLeft++;
-// }
-//}
-
-void Level::AddBrick(const GameObjectShared& brick)
-{
-    mBricks.emplace_back(brick);
+    mGameObjects.emplace_back(gameObject);
 }
 
 void Level::MarkForDeath(const GameObjectShared& gameObject)
@@ -48,14 +23,14 @@ void Level::MarkForDeath(const GameObjectShared& gameObject)
 
 void Level::Render()
 {
-    for(const GameObjectShared& brick : mBricks)
+    for(const GameObjectShared& gameObject : mGameObjects)
     {
-        if(brick == nullptr)
+        if(gameObject == nullptr)
         {
             continue;
         }
 
-        for(const ComponentShared& component : brick->Components())
+        for(const ComponentShared& component : gameObject->Components())
         {
             if(component)
             {
@@ -67,22 +42,24 @@ void Level::Render()
 
 void Level::Update()
 {
-    for(auto it = std::begin(mBricks); it != std::end(mBricks);)
+    // For safety, iterate through a copy of gameObjects because the original can be resized
+    std::vector<GameObjectShared> gameObjects = mGameObjects;
+    for(auto it = std::begin(mGameObjects); it != std::end(mGameObjects);)
     {
-        std::shared_ptr<GameObject> brick = *it;
-        if(brick == nullptr)
+        std::shared_ptr<GameObject> gameObject = *it;
+        if(gameObject == nullptr)
         {
-            it = mBricks.erase(it);
+            it = mGameObjects.erase(it);
             continue;
         }
 
-        if(mGameObjectsToDelete.find(brick) != std::end(mGameObjectsToDelete))
+        if(mGameObjectsToDelete.find(gameObject) != std::end(mGameObjectsToDelete))
         {
-            it = mBricks.erase(it);
+            it = mGameObjects.erase(it);
             continue;
         }
 
-        for(const ComponentShared& component : brick->Components())
+        for(const ComponentShared& component : gameObject->Components())
         {
             if(component)
             {
@@ -113,24 +90,24 @@ void Level::UpdateScore(int score) const
 
 int Level::NumBricksLeft() const
 {
-    return std::count_if(std::begin(mBricks), std::end(mBricks), [](const GameObjectShared& gameObjectShared) {
-        return gameObjectShared && gameObjectShared->HasComponent<HealthComponent>();
+    return std::count_if(std::begin(mGameObjects), std::end(mGameObjects), [](const GameObjectRef& gameObjectShared) {
+        return gameObjectShared.expired() == false && gameObjectShared.lock()->HasComponent<HealthComponent>();
     });
 }
 
 void Level::DebugDestroyAllBricks()
 {
-    mBricks.clear();
+    mGameObjects.clear();
 }
 
 void Level::DebugDamageFirstBrick()
 {
-    if(mBricks.empty())
+    if(mGameObjects.empty())
     {
         return;
     }
 
-    for(GameObjectShared& brick : mBricks)
+    for(GameObjectShared& brick : mGameObjects)
     {
         if(brick == nullptr)
         {
@@ -168,37 +145,4 @@ void Level::DebugDamageFirstBrick()
             return;
         }
     }
-}
-
-// CollisionListener
-void Level::OnCollision(int /*l*/, int /*r*/)
-{
-    // auto brickIt1 = mBricks.find(l);
-    // auto brickIt2 = mBricks.find(r);
-    //// Bricks can't hit bricks
-    // if(brickIt1 != mBricks.end() && brickIt2 != mBricks.end())
-    //{
-    //     return;
-    // }
-    //// At least one needs to be a brick
-    // if(brickIt1 == mBricks.end() && brickIt2 == mBricks.end())
-    //{
-    //     return;
-    // }
-
-    // auto brickIt   = brickIt1 != mBricks.end() ? brickIt1 : brickIt2;
-    // auto idOfBrick = brickIt == brickIt1 ? l : r;
-
-    // brickIt->second.OnHit();
-    // if(brickIt->second.Health() <= 0)
-    //{
-    //     mScoreReportingFunction(brickIt->second.ScoreValue());
-    //     mEngine.GetCollisionWorld().RemoveBoxCollider(idOfBrick);
-    //     mBricks.erase(idOfBrick);
-    //     mNumBricksLeft--;
-    // }
-    // else
-    //{
-    //     mScoreReportingFunction(10); // 10 points for hitting a brick no matter the type
-    // }
 }

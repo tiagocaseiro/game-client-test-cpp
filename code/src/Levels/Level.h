@@ -13,12 +13,11 @@
 
 #include "Game/GameObject.h"
 
-class Level : King::CollisionWorld::CollisionListener
+class Level
 {
 public:
     using ScoreReportingFunction = std::function<void(int)>;
     Level(King::Engine& engine, ScoreReportingFunction scoreReportingFunction);
-    ~Level();
 
     void SetName(std::string name)
     {
@@ -46,9 +45,8 @@ public:
         return mNextLevelFilename;
     }
 
-    void Reset();
     // void AddBrick(const glm::vec2& position, Brick::BrickType type, int hitPoints = 1);
-    void AddBrick(const GameObjectShared& brick);
+    void AddGameObject(const GameObjectShared& gameObject);
     void MarkForDeath(const GameObjectShared& gameObject);
     void Render();
     void Update();
@@ -58,17 +56,11 @@ public:
     void DebugDestroyAllBricks();
     void DebugDamageFirstBrick();
 
-    // CollisionListener
-    void OnCollision(int l, int r) override;
-
 private:
     King::Engine& mEngine;
     ScoreReportingFunction mScoreReportingFunction;
-    // std::map<int, Brick> mBricks;
-    // int mNumBricksLeft;
 
-    std::vector<GameObjectShared> mBricks;
-
+    std::vector<GameObjectShared> mGameObjects;
     std::set<GameObjectShared> mGameObjectsToDelete;
 
     std::string mName;

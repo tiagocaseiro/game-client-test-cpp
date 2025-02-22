@@ -17,8 +17,6 @@
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
 
-GameObjectTemplates sGameObjectTemplates;
-
 bool StartsWith(const std::string& text, const std::string& start)
 {
     return (text.find(start) == 0);
@@ -35,17 +33,18 @@ GamePlayState::GamePlayState(King::Engine& engine, GameEndedFunction gameEndedFu
     mEngine.GetCollisionWorld().AddCollisionListener(*this);
 }
 
-void ReadGameConfig(King::Engine& engine)
+void ReadSerializedGameTemplateData(King::Engine& engine, const std::string& filePath)
 {
-    std::ifstream configFile("./assets/Config/BrickGameObjectTemplates.txt");
+    std::ifstream configFile(filePath);
+
     if(configFile.is_open() == false)
     {
         return;
     }
-    GameObjectTemplate* gameObjectTemplate = nullptr;
     ComponentInitFunc currentComponentInitFunc;
-    std::string componentName;
+    std::string componentId;
     std::unordered_map<std::string, std::string> currentParameters;
+    std::string currentGameObjectTemplateId;
     std::string line;
     while(std::getline(configFile, line))
     {
@@ -53,44 +52,35 @@ void ReadGameConfig(King::Engine& engine)
         {
             currentComponentInitFunc = nullptr;
             currentParameters.clear();
-            auto it = sGameObjectTemplates.emplace(line.substr(3), GameObjectTemplate{});
-
-            const bool emplaced = it.second;
-            if(emplaced)
-            {
-                gameObjectTemplate = &it.first->second;
-            }
-            continue;
-        }
-
-        if(gameObjectTemplate == nullptr)
-        {
+            currentGameObjectTemplateId = line.substr(3);
             continue;
         }
 
         if(StartsWith(line, "parent="))
         {
-            std::string parentGameObjectTemplateName = line.substr(7);
+            std::string parentGameObjectTemplateId = line.substr(7);
 
-            auto it = sGameObjectTemplates.find(parentGameObjectTemplateName);
+            std::optional<const GameObjectTemplate> parentGameObjectTemplateOpt =
+                GameObject::FindGameObjectTemplate(parentGameObjectTemplateId);
 
-            if(it == std::end(sGameObjectTemplates))
+            if(parentGameObjectTemplateOpt.has_value() == false)
             {
                 continue;
             }
 
-            const GameObjectTemplate& parentGameObjectTemplate = it->second;
-
-            *gameObjectTemplate = parentGameObjectTemplate;
-
+            for(const auto& [parentComponentId, parentComponentInitFunc] : *parentGameObjectTemplateOpt)
+            {
+                GameObject::AddComponentInitFunc(currentGameObjectTemplateId, parentComponentId,
+                                                 parentComponentInitFunc);
+            }
             continue;
         }
 
         if(StartsWith(line, "componentStart="))
         {
             currentComponentInitFunc = nullptr;
-            componentName            = line.substr(15);
-            auto it                  = GetComponentInitFuncs().find(componentName);
+            componentId              = line.substr(15);
+            auto it                  = GetComponentInitFuncs().find(componentId);
             if(it != std::end(GetComponentInitFuncs()))
             {
                 ComponentInitFunc initFunc = it->second;
@@ -103,8 +93,8 @@ void ReadGameConfig(King::Engine& engine)
 
         if(StartsWith(line, "componentEnd="))
         {
-            auto initFunc = [currentParameters, currentComponentInitFunc,
-                             &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
+            const auto initFunc = [currentParameters, currentComponentInitFunc,
+                                   &engine](GameObjectRef owner) -> std::shared_ptr<Component> {
                 if(currentComponentInitFunc)
                 {
                     return currentComponentInitFunc(owner, engine, currentParameters);
@@ -112,16 +102,7 @@ void ReadGameConfig(King::Engine& engine)
                 return nullptr;
             };
 
-            auto it = gameObjectTemplate->find(componentName);
-            if(it == std::end(*gameObjectTemplate))
-            {
-                gameObjectTemplate->emplace(componentName, initFunc);
-            }
-            else
-            {
-                it->second = initFunc;
-            }
-
+            GameObject::AddComponentInitFunc(currentGameObjectTemplateId, componentId, initFunc);
             currentParameters.clear();
             continue;
         }
@@ -140,7 +121,8 @@ void ReadGameConfig(King::Engine& engine)
 
 void GamePlayState::Start()
 {
-    ReadGameConfig(mEngine);
+    ReadSerializedGameTemplateData(mEngine, "./assets/Config/BrickGameObjectTemplates.txt");
+    ReadSerializedGameTemplateData(mEngine, "./assets/Config/PowerUpGameObjectTemplates.txt");
 
     mNumBallsLeft = 3;
     mLevelClear   = false;
@@ -159,7 +141,7 @@ void GamePlayState::Start()
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2);
     mColliders.push_back(mIdOfBottomCollider);
 
-    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, sGameObjectTemplates, [this](int score) {
+    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, [this](int score) {
         mScore += score;
     });
 

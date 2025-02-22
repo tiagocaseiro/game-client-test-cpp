@@ -8,7 +8,9 @@
 #include "Components/ComponentInit.h"
 #include "Levels/Level.h"
 
-GameObjectShared GameObject::MakeGameObject(Level& level, const GameObjectTemplate& gameObjectTemplate)
+static GameObjectTemplates sGameObjectTemplates;
+
+GameObjectShared GameObject::MakeGameObject(Level& level, const std::string gameObjectTemplateId)
 {
     GameObjectShared gameObject = std::shared_ptr<GameObject>(new GameObject(level));
 
@@ -16,6 +18,15 @@ GameObjectShared GameObject::MakeGameObject(Level& level, const GameObjectTempla
     {
         return nullptr;
     }
+
+    auto it = sGameObjectTemplates.find(gameObjectTemplateId);
+
+    if(it == std::end(sGameObjectTemplates))
+    {
+        return nullptr;
+    }
+
+    GameObjectTemplate& gameObjectTemplate = it->second;
 
     for(const auto& componentInitData : gameObjectTemplate)
     {
@@ -35,14 +46,8 @@ GameObject::GameObject(Level& level) : mLevel(level)
 {
 }
 
-// GameObject::~GameObject()
-//{
-//     std::cout << __FUNCTION__ << std::endl;
-// }
-
 void GameObject::AddComponent(std::shared_ptr<Component> newComponent)
 {
-    // Make it unique (?)
     mComponents.push_back(newComponent);
 
     for(const std::shared_ptr<Component>& component : mComponents)
@@ -56,12 +61,39 @@ const std::vector<std::shared_ptr<Component>> GameObject::Components() const
     return mComponents;
 }
 
+void GameObject::AddComponentInitFunc(
+    const std::string& gameObjectTemplateId, const std::string& componentId,
+    const std::function<std::shared_ptr<Component>(std::weak_ptr<GameObject>)>& componentInitFunc)
+{
+    GameObjectTemplate& gameObjectTemplate = sGameObjectTemplates[gameObjectTemplateId];
+
+    auto it = gameObjectTemplate.find(componentId);
+    if(it == std::end(gameObjectTemplate))
+    {
+        gameObjectTemplate.emplace(componentId, componentInitFunc);
+        return;
+    }
+    it->second = componentInitFunc;
+}
+
+std::optional<const GameObjectTemplate> GameObject::FindGameObjectTemplate(const std::string& id)
+{
+    auto it = sGameObjectTemplates.find(id);
+
+    if(it == std::end(sGameObjectTemplates))
+    {
+        return std::nullopt;
+    }
+
+    return it->second;
+}
+
 void GameObject::MarkForDeath()
 {
     mLevel.MarkForDeath(shared_from_this());
 }
 
-const Level& GameObject::GameLevel()
+Level& GameObject::GameLevel()
 {
     return mLevel;
 }

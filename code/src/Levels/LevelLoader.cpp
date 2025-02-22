@@ -12,62 +12,15 @@
 #include "Components/CollisionComponent.h"
 #include "Components/TransformComponent.h"
 
-namespace
+static bool StartsWith(const std::string& text, const std::string& start)
 {
-    bool StartsWith(const std::string& text, const std::string& start)
-    {
-        return (text.find(start) == 0);
-    }
-    //
-    // void ParseBlockChar(char c, Level* level, const glm::vec2& brickPos)
-    //{
-    //    if(c == 'r')
-    //    {
-    //        // Red block
-    //        level->AddBrick(brickPos, Brick::BRICK_RED);
-    //    }
-    //    else if(c == 'g')
-    //    {
-    //        level->AddBrick(brickPos, Brick::BRICK_GREEN);
-    //    }
-    //    else if(c == 'b')
-    //    {
-    //        level->AddBrick(brickPos, Brick::BRICK_BLUE);
-    //    }
-    //    else if(c == 'o')
-    //    {
-    //        level->AddBrick(brickPos, Brick::BRICK_ORANGE);
-    //    }
-    //    else if(c == 'v')
-    //    {
-    //        level->AddBrick(brickPos, Brick::BRICK_GLASS);
-    //    }
-    //    else if(c == 'c')
-    //    {
-    //        level->AddBrick(brickPos, Brick::BRICK_GREY, 2);
-    //    }
-    //    else if(c == 's')
-    //    {
-    //        level->AddBrick(brickPos, Brick::BRICK_SOLID);
-    //    }
-    //    else if(c > '0' && c < '8')
-    //    {
-    //        int hitPoints = c - '0';
-    //        level->AddBrick(brickPos, Brick::BRICK_COUNTER, hitPoints);
-    //    }
-    //    else if(c == 'p')
-    //    {
-    //        assert(false && "Unknown type of brick!");
-    //    }
-    //}
-} // namespace
+    return (text.find(start) == 0);
+}
 
 std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King::Engine& engine,
-                                              const GameObjectTemplates& gameObjectTemplates,
                                               Level::ScoreReportingFunction scoreReportingFunction)
 {
     std::unique_ptr<Level> level = std::make_unique<Level>(engine, scoreReportingFunction);
-    level->Reset();
 
     std::string levelTitle      = "Untitled";
     std::string levelBackground = "Background-01.png";
@@ -111,7 +64,7 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                     std::string row;
                     while(std::getline(lineStream, row, ','))
                     {
-                        LoadBrick(gameObjectTemplates, row, *level, brickPos, x, y);
+                        LoadBrick(row, *level, brickPos, x, y);
                     }
                     x = 0;
                     y++;
@@ -128,25 +81,17 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
     return level;
 }
 
-void LevelLoader::LoadBrick(const GameObjectTemplates& gameObjectTemplates, const std::string& row, Level& level,
-                            glm::vec2& brickPos, int& x, int& y)
+void LevelLoader::LoadBrick(const std::string& row, Level& level, glm::vec2& brickPos, int& x, int& y)
 {
     brickPos.x = float(x * kBrickWidth);
     brickPos.y = float(y * kBrickHeight);
 
     std::string brickType = row.substr(0, 1);
 
-    auto it = gameObjectTemplates.find(brickType);
-    if(it == std::end(gameObjectTemplates))
-    {
-        x++;
-        return;
-    }
-
-    std::shared_ptr<GameObject> brick = GameObject::MakeGameObject(level, it->second);
+    std::shared_ptr<GameObject> brick = GameObject::MakeGameObject(level, brickType);
     if(brick != nullptr)
     {
-        level.AddBrick(brick);
+        level.AddGameObject(brick);
 
         // Set brick position
         if(std::shared_ptr<TransformComponent> transformComponent = brick->FindComponent<TransformComponent>())
