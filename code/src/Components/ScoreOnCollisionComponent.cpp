@@ -36,8 +36,7 @@ void ScoreOnCollisionComponent::OnCollision(int l, int r)
 
     int colliderId = mCollisionComponentRef.lock()->ColliderId();
 
-    if((mHealthComponentRef.expired() || mHealthComponentRef.lock()->IsAlive()) && colliderId &&
-       (l == colliderId || r == colliderId))
+    if((mHealthComponentRef.expired() || mHealthComponentRef.lock()->IsAlive()) && (l == colliderId || r == colliderId))
     {
 
         mOwnerRef.lock()->GameLevel().UpdateScore(mScore);
