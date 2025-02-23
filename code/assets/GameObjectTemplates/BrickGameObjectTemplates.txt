@@ -4,9 +4,6 @@ componentStart=SpriteComponent
 sprite1=Brick-red.png
 componentEnd=
 
-componentStart=HealthComponent
-componentEnd=
-
 componentStart=TransformComponent
 scale=2
 componentEnd=
@@ -46,6 +43,9 @@ componentStart=ScoreOnCollisionComponent
 score=10
 componentEnd=
 
+componentStart=HealthComponent
+componentEnd=
+
 id=r
 
 parent=BaseBrickGameObject
@@ -55,6 +55,9 @@ sprite1=Brick-red.png
 componentEnd=
 
 componentStart=DamageOnCollisionComponent
+componentEnd=
+
+componentStart=HealthComponent
 componentEnd=
 
 id=o
@@ -68,6 +71,9 @@ componentEnd=
 componentStart=DamageOnCollisionComponent
 componentEnd=
 
+componentStart=HealthComponent
+componentEnd=
+
 id=b
 
 parent=BaseBrickGameObject
@@ -77,6 +83,9 @@ sprite1=Brick-blue.png
 componentEnd=
 
 componentStart=DamageOnCollisionComponent
+componentEnd=
+
+componentStart=HealthComponent
 componentEnd=
 
 
@@ -103,6 +112,8 @@ componentEnd=
 componentStart=DamageOnCollisionComponent
 componentEnd=
 
+componentStart=HealthComponent
+componentEnd=
 
 id=1
 
@@ -118,6 +129,9 @@ componentEnd=
 componentStart=ScoreOnCollisionComponent
 score=10
 componentEnd=
+
+componentStart=HealthComponent
+ componentEnd=
 
 id=2
 
@@ -266,6 +280,9 @@ componentEnd=
 componentStart=DamageOnCollisionComponent
 componentEnd=
 
+componentStart=HealthComponent
+componentEnd=
+
 id=p
 
 parent=BaseBrickGameObject
@@ -281,4 +298,7 @@ componentStart=SpawnGameObjectOnDestructionComponent
 gameObjectTemplateId=EnlargePowerUpGameObject
 offsetX=20
 offsetY=4
+componentEnd=
+
+componentStart=HealthComponent
 componentEnd=
