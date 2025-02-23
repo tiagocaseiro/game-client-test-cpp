@@ -25,6 +25,12 @@ public:
         mLevelFilename = levelFilename;
     }
 
+    void MarkForDeath(const std::shared_ptr<GameObject>& gameObject);
+    void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
+    void UpdateScore(int score);
+
+    std::shared_ptr<Paddle> GetPaddle();
+
 private:
     void RenderUI();
     void RenderUIIndicator(int y, std::string title, std::string text);
@@ -40,8 +46,11 @@ private:
     int mBGTx, mPanelTx, mTextFrameTx;
 
     int mScore;
-    std::unique_ptr<Paddle> mPaddle;
+    std::shared_ptr<Paddle> mPaddle;
     std::unique_ptr<Ball> mBall;
+
+    std::vector<GameObjectShared> mGameObjects;
+    std::set<GameObjectShared> mGameObjectsToDelete;
 
     int mIdOfBottomCollider;
     int mNumBallsLeft;

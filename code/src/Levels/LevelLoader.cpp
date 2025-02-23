@@ -11,6 +11,7 @@
 
 #include "Components/CollisionComponent.h"
 #include "Components/TransformComponent.h"
+#include "GameStates/GamePlayState.h"
 
 static bool StartsWith(const std::string& text, const std::string& start)
 {
@@ -18,9 +19,9 @@ static bool StartsWith(const std::string& text, const std::string& start)
 }
 
 std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King::Engine& engine,
-                                              Level::ScoreReportingFunction scoreReportingFunction)
+                                              GamePlayState& gameState)
 {
-    std::unique_ptr<Level> level = std::make_unique<Level>(engine, scoreReportingFunction);
+    std::unique_ptr<Level> level = std::make_unique<Level>(engine);
 
     std::string levelTitle      = "Untitled";
     std::string levelBackground = "Background-01.png";
@@ -64,7 +65,7 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
                     std::string row;
                     while(std::getline(lineStream, row, ','))
                     {
-                        LoadBrick(row, *level, brickPos, x, y);
+                        gameState.AddGameObject(LoadBrick(row, brickPos, x, y, gameState));
                     }
                     x = 0;
                     y++;
@@ -81,18 +82,17 @@ std::unique_ptr<Level> LevelLoader::LoadLevel(const std::string& levelName, King
     return level;
 }
 
-void LevelLoader::LoadBrick(const std::string& row, Level& level, glm::vec2& brickPos, int& x, int& y)
+std::shared_ptr<GameObject> LevelLoader::LoadBrick(const std::string& row, glm::vec2& brickPos, int& x, int& y,
+                                                   GamePlayState& gameState)
 {
     brickPos.x = float(x * kBrickWidth);
     brickPos.y = float(y * kBrickHeight);
 
     std::string brickType = row.substr(0, 1);
 
-    std::shared_ptr<GameObject> brick = GameObject::MakeGameObject(level, brickType);
+    std::shared_ptr<GameObject> brick = GameObject::MakeGameObject(gameState, brickType);
     if(brick != nullptr)
     {
-        level.AddGameObject(brick);
-
         // Set brick position
         if(std::shared_ptr<TransformComponent> transformComponent = brick->FindComponent<TransformComponent>())
         {
@@ -107,4 +107,5 @@ void LevelLoader::LoadBrick(const std::string& row, Level& level, glm::vec2& bri
         }
     }
     x++;
+    return brick;
 }

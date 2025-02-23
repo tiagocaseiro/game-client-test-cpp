@@ -7,12 +7,14 @@
 
 #include "Components/Component.h"
 
+class GameObject;
 class LevelLoader
 {
 public:
     static std::unique_ptr<Level> LoadLevel(const std::string& levelName, King::Engine& engine,
-                                            Level::ScoreReportingFunction scoreReportingFunction);
+                                            GamePlayState& gameState);
 
 private:
-    static void LoadBrick(const std::string& row, Level& level, glm::vec2& brickPos, int& x, int& y);
+    static std::shared_ptr<GameObject> LoadBrick(const std::string& row, glm::vec2& brickPos, int& x, int& y,
+                                                 GamePlayState& gameState);
 };

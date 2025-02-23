@@ -16,6 +16,7 @@
 #include "Components/SpawnGameObjectOnDestructionComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
+#include "Game/GameObject.h"
 
 bool StartsWith(const std::string& text, const std::string& start)
 {
@@ -129,7 +130,7 @@ void GamePlayState::Start()
 
     mEngine.GetCollisionWorld().ClearAll();
 
-    mPaddle = std::make_unique<Paddle>(mEngine);
+    mPaddle = std::make_shared<Paddle>(mEngine);
     mColliders.push_back(
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, -20), glm::vec2(1044, 20), 1 << 1, 1 << 2));
     mColliders.push_back(
@@ -141,9 +142,7 @@ void GamePlayState::Start()
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2 | 1 << 4);
     mColliders.push_back(mIdOfBottomCollider);
 
-    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, [this](int score) {
-        mScore += score;
-    });
+    mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, *this);
 
     mBGTx = mEngine.LoadTexture(mLevel->Background().c_str());
 
@@ -156,7 +155,7 @@ void GamePlayState::Start()
 
 void GamePlayState::ResetPaddleAndBall()
 {
-    mPaddle->ResetPosition();
+    mPaddle->Reset();
     mBall->SetPos(10, 750);
     mBall->SetStatic(true);
     mBall->SetVelocity(glm::vec2(400, -400));
@@ -186,13 +185,56 @@ void GamePlayState::Update()
         // Cheat!
         if(mEngine.GetKeyDown(SDLK_w))
         {
-            mLevel->DebugDestroyAllBricks();
+            mGameObjects.clear();
         }
 
         static bool canDebugHit = true;
         if(mEngine.GetKeyDown(SDLK_1) && canDebugHit)
         {
-            mLevel->DebugDamageFirstBrick();
+            if(mGameObjects.empty())
+            {
+                return;
+            }
+
+            for(GameObjectShared& brick : mGameObjects)
+            {
+                if(brick == nullptr)
+                {
+                    continue;
+                }
+
+                std::shared_ptr<CollisionBoxComponent> collisionComponent =
+                    brick->FindComponent<CollisionBoxComponent>();
+                if(collisionComponent == nullptr)
+                {
+                    continue;
+                }
+
+                std::optional<int> colliderId = collisionComponent->ColliderId();
+                if(colliderId.has_value() == false)
+                {
+                    continue;
+                }
+
+                bool isToReturn = false;
+
+                if(std::shared_ptr<DamageOnCollisionComponent> damageOnCollisionComponent =
+                       brick->FindComponent<DamageOnCollisionComponent>())
+                {
+                    isToReturn = true;
+                    damageOnCollisionComponent->OnCollision(*colliderId, *colliderId);
+                }
+
+                if(std::shared_ptr<ScoreOnCollisionComponent> scoreOnCollisionComponent =
+                       brick->FindComponent<ScoreOnCollisionComponent>())
+                {
+                    scoreOnCollisionComponent->OnCollision(*colliderId, *colliderId);
+                }
+                if(isToReturn)
+                {
+                    return;
+                }
+            }
         }
         canDebugHit = mEngine.GetKeyUp(SDLK_1);
 
@@ -201,15 +243,59 @@ void GamePlayState::Update()
             mBall->SetStatic(false);
         }
 
-        if(mLevel->NumBricksLeft() == 0)
+        const int numBricksLeft =
+            std::count_if(std::begin(mGameObjects), std::end(mGameObjects), [](const GameObjectRef& gameObjectShared) {
+                return gameObjectShared.expired() == false && gameObjectShared.lock()->HasComponent<HealthComponent>();
+            });
+
+        if(numBricksLeft == 0)
         {
             mLevelClear = true;
             mBall->SetLevelClear(true);
         }
     }
+
     mPaddle->Update();
     mBall->Update();
-    mLevel->Update();
+    // For safety, iterate through a copy of gameObjects because the original can be resized
+    std::vector<GameObjectShared> gameObjects = mGameObjects;
+    for(auto it = std::begin(mGameObjects); it != std::end(mGameObjects);)
+    {
+        std::shared_ptr<GameObject> gameObject = *it;
+        if(gameObject == nullptr)
+        {
+            it = mGameObjects.erase(it);
+            continue;
+        }
+
+        if(mGameObjectsToDelete.find(gameObject) != std::end(mGameObjectsToDelete))
+        {
+            it = mGameObjects.erase(it);
+            continue;
+        }
+
+        for(const ComponentShared& component : gameObject->Components())
+        {
+            if(component)
+            {
+                component->Update();
+            }
+        }
+        it++;
+    }
+
+    for(const GameObjectShared& gameObject : mGameObjectsToDelete)
+    {
+        for(const ComponentShared& component : gameObject->Components())
+        {
+            if(component)
+            {
+                component->OnDestroyed();
+            }
+        }
+    }
+
+    mGameObjectsToDelete.clear();
 }
 
 void GamePlayState::Render()
@@ -220,8 +306,21 @@ void GamePlayState::Render()
 
     mPaddle->Render();
     mBall->Render();
-    mLevel->Render();
+    for(const GameObjectShared& gameObject : mGameObjects)
+    {
+        if(gameObject == nullptr)
+        {
+            continue;
+        }
 
+        for(const ComponentShared& component : gameObject->Components())
+        {
+            if(component)
+            {
+                component->Render();
+            }
+        }
+    }
     if(mLevelClear)
     {
         mEngine.WriteCentered("LEVEL CLEAR!", 512, 480, 4.0f);
@@ -280,4 +379,24 @@ void GamePlayState::End()
         mEngine.GetCollisionWorld().RemoveBoxCollider(collider);
     }
     mColliders.clear();
+}
+
+void GamePlayState::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
+{
+    mGameObjects.emplace_back(gameObject);
+}
+
+void GamePlayState::MarkForDeath(const std::shared_ptr<GameObject>& gameObject)
+{
+    mGameObjectsToDelete.emplace(gameObject);
+}
+
+void GamePlayState::UpdateScore(int score)
+{
+    mScore += score;
+}
+
+std::shared_ptr<Paddle> GamePlayState::GetPaddle()
+{
+    return mPaddle;
 }

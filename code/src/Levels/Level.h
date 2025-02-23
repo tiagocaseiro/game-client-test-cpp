@@ -17,7 +17,7 @@ class Level
 {
 public:
     using ScoreReportingFunction = std::function<void(int)>;
-    Level(King::Engine& engine, ScoreReportingFunction scoreReportingFunction);
+    Level(King::Engine& engine);
 
     void SetName(std::string name)
     {
@@ -45,23 +45,9 @@ public:
         return mNextLevelFilename;
     }
 
-    // void AddBrick(const glm::vec2& position, Brick::BrickType type, int hitPoints = 1);
-    void AddGameObject(const GameObjectShared& gameObject);
-    void MarkForDeath(const GameObjectShared& gameObject);
-    void Render();
-    void Update();
-    void UpdateScore(int score) const;
-    int NumBricksLeft() const;
-
-    void DebugDestroyAllBricks();
-    void DebugDamageFirstBrick();
-
 private:
     King::Engine& mEngine;
     ScoreReportingFunction mScoreReportingFunction;
-
-    std::vector<GameObjectShared> mGameObjects;
-    std::set<GameObjectShared> mGameObjectsToDelete;
 
     std::string mName;
     std::string mLevelBackground;

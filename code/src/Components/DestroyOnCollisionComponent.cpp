@@ -4,8 +4,8 @@
 
 #include "CollisionComponent.h"
 #include "Game/GameObject.h"
+#include "GameStates/GamePlayState.h"
 #include "HealthComponent.h"
-#include "Levels/Level.h"
 
 const std::string& DestroyOnCollisionComponent::ID()
 {

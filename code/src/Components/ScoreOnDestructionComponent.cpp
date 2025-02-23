@@ -5,7 +5,7 @@
 #include <king/Engine.h>
 
 #include "Component.h"
-#include "Levels/Level.h"
+#include "GameStates/GamePlayState.h"
 #include "TransformComponent.h"
 
 ScoreOnDestructionComponent::ScoreOnDestructionComponent(GameObjectRef owner, King::Engine& engine, const int score)
@@ -38,5 +38,5 @@ void ScoreOnDestructionComponent::OnDestroyed()
     {
         return;
     }
-    mOwnerRef.lock()->GameLevel().UpdateScore(mScore);
+    mOwnerRef.lock()->GameState().UpdateScore(mScore);
 }

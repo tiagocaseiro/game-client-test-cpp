@@ -27,12 +27,15 @@ ComponentShared HealthComponent::MakeComponent(GameObjectRef owner, King::Engine
 
 void HealthComponent::Decrement(const u32 dec)
 {
+    const bool wasAlive = IsAlive();
+
     mHealth -= dec;
 
     mHealth = std::max(mHealth, 0);
 
+    const bool died                    = wasAlive == IsAlive() == false;
     std::shared_ptr<GameObject> mOwner = mOwnerRef.lock();
-    if(IsAlive() == false && mOwner)
+    if(died && mOwner)
     {
         mOwner->MarkForDeath();
     }

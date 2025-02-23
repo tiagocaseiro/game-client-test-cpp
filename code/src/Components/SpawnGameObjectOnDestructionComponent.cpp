@@ -5,7 +5,7 @@
 #include <king/Engine.h>
 
 #include "Component.h"
-#include "Levels/Level.h"
+#include "GameStates/GamePlayState.h"
 #include "TransformComponent.h"
 
 SpawnGameObjectOnDestructionComponent::SpawnGameObjectOnDestructionComponent(GameObjectRef owner, King::Engine& engine,
@@ -59,7 +59,7 @@ void SpawnGameObjectOnDestructionComponent::OnDestroyed()
         return;
     }
 
-    std::shared_ptr<GameObject> newGameObject = GameObject::MakeGameObject(owner->GameLevel(), mGameObjectTemplateId);
+    std::shared_ptr<GameObject> newGameObject = GameObject::MakeGameObject(owner->GameState(), mGameObjectTemplateId);
     std::shared_ptr<TransformComponent> transformComponent = mTransformComponent.lock();
 
     if(newGameObject == nullptr || transformComponent == nullptr)
@@ -75,5 +75,5 @@ void SpawnGameObjectOnDestructionComponent::OnDestroyed()
 
     newTransformComponent->SetPosition(transformComponent->GetPosition() + mOffset);
 
-    owner->GameLevel().AddGameObject(newGameObject);
+    owner->GameState().AddGameObject(newGameObject);
 }

@@ -7,8 +7,8 @@
 #include "CollisionComponent.h"
 #include "Component.h"
 #include "Game/GameObject.h"
+#include "GameStates/GamePlayState.h"
 #include "HealthComponent.h"
-#include "Levels/Level.h"
 
 ScoreOnCollisionComponent::ScoreOnCollisionComponent(GameObjectRef owner, King::Engine& engine, const int score)
     : Component(owner, engine), mScore(score)
@@ -39,7 +39,7 @@ void ScoreOnCollisionComponent::OnCollision(int l, int r)
     if((mHealthComponentRef.expired() || mHealthComponentRef.lock()->IsAlive()) && (l == colliderId || r == colliderId))
     {
 
-        mOwnerRef.lock()->GameLevel().UpdateScore(mScore);
+        mOwnerRef.lock()->GameState().UpdateScore(mScore);
     }
 }
 const std::string& ScoreOnCollisionComponent::ID()

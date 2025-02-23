@@ -4,14 +4,15 @@
 #include "CollisionComponent.h"
 #include "Component.h"
 #include "DamageOnCollisionComponent.h"
+#include "DestroyOnCollisionComponent.h"
 #include "HealthComponent.h"
 #include "RigidBodyComponent.h"
 #include "ScoreOnCollisionComponent.h"
 #include "ScoreOnDestructionComponent.h"
+#include "SetPaddleDataComponent.h"
 #include "SpawnGameObjectOnDestructionComponent.h"
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
-#include "DestroyOnCollisionComponent.h"
 
 const std::unordered_map<std::string, ComponentInitFunc>& GetComponentInitFuncs()
 {
@@ -27,7 +28,8 @@ const std::unordered_map<std::string, ComponentInitFunc>& GetComponentInitFuncs(
         Component::InitData<ScoreOnDestructionComponent>(),
         Component::InitData<SpawnGameObjectOnDestructionComponent>(),
         Component::InitData<RigidBodyComponent>(),
-        Component::InitData<DestroyOnCollisionComponent>()
+        Component::InitData<DestroyOnCollisionComponent>(),
+        Component::InitData<SetPaddleDataComponent>(),
      };
     // clang-format on
 
