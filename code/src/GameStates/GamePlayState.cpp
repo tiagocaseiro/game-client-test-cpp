@@ -126,7 +126,7 @@ void GamePlayState::Start()
     ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/BrickGameObjectTemplates.txt");
     ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/PowerUpGameObjectTemplates.txt");
 
-    mNumBallsLeft = 999999;
+    mNumBallsLeft = 3;
     mLevelClear   = false;
 
     mEngine.GetCollisionWorld().ClearAll();
@@ -340,6 +340,11 @@ void GamePlayState::RenderUI()
     RenderUIIndicator(20, "Current Level", mLevel->Name());
     RenderUIIndicator(120, "Balls", std::to_string(mNumBallsLeft - 1));
     RenderUIIndicator(220, "Score", std::to_string(mScore));
+    std::optional<Paddle::TimedData> timedData = mPaddle->GetTimedData();
+    if(timedData && timedData->timer)
+    {
+        RenderUIIndicator(320, "Power-Up", std::to_string(static_cast<unsigned int>(*timedData->timer)));
+    }
 }
 
 void GamePlayState::RenderUIIndicator(int y, std::string title, std::string text)

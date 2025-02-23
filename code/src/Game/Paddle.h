@@ -36,6 +36,8 @@ public:
     void SetTextureHandle(const int textureHandle);
     void Paddle::SetTimedData(TimedData timedData);
 
+    std::optional<TimedData> GetTimedData();
+
 private:
     void InitCollisionData();
 

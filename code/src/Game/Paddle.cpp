@@ -107,3 +107,8 @@ int Paddle::GetHeight() const
 
     return kPaddleHeight;
 }
+
+std::optional<Paddle::TimedData> Paddle::GetTimedData()
+{
+    return mTimedData;
+}

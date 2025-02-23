@@ -29,7 +29,7 @@ componentEnd=
 componentStart=SetPaddleDataComponent
 width=192
 sprite=Paddle-large.png
-timer=60
+timer=10
 componentEnd=
 
 id=ExtraBallPowerUpGameObject
