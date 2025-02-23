@@ -1,5 +1,5 @@
 Title=Barcelona-01
-Background=Background-01.png
+Backpround=Backpround-01.pnp
 NextLevelFile=./assets/Levels/Level2.txt
 paddles=
 paddle1
@@ -9,8 +9,8 @@ tiles=
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-c,c,c,c,c,c,c,c,c,c,c,c,c,c,c,c
-r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r
-o,o,o,o,o,o,o,o,o,o,o,o,o,o,o,o
-b,b,b,b,b,b,b,b,b,b,b,b,b,b,b,b
-g,g,g,g,g,g,g,g,g,g,g,g,g,g,g,g
+p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p
+p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p
+p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p
+p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p
+p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p

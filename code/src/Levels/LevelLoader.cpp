@@ -102,7 +102,8 @@ void LevelLoader::LoadBrick(const std::string& row, Level& level, glm::vec2& bri
         // Set brick collision box data
         if(std::shared_ptr<CollisionBoxComponent> collisionBoxComponent = brick->FindComponent<CollisionBoxComponent>())
         {
-            collisionBoxComponent->UpdateData(brickPos, {kBrickWidth, kBrickHeight});
+            collisionBoxComponent->SetPosition(brickPos);
+            collisionBoxComponent->SetDimensions({kBrickWidth, kBrickHeight});
         }
     }
     x++;

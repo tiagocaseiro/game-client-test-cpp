@@ -9,7 +9,7 @@ class GameObject;
 
 namespace King
 {
-class Engine;
+    class Engine;
 }
 
 class ScoreOnDestructionComponent final : public Component
@@ -21,9 +21,8 @@ public:
                                          const std::unordered_map<std::string, std::string>& parameters);
 
 private:
-    void OnDestroyed() override;
-
     ScoreOnDestructionComponent(GameObjectRef owner, King::Engine& engine, const int score);
+    void OnDestroyed() override;
 
 private:
     const int mScore;

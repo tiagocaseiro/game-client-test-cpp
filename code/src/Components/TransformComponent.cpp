@@ -35,7 +35,7 @@ ComponentShared TransformComponent::MakeComponent(GameObjectRef owner, King::Eng
     return std::shared_ptr<Component>(new TransformComponent(owner, engine, position, rotation, scale));
 }
 
-TransformComponent::TransformComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2 position,
+TransformComponent::TransformComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2& position,
                                        const float rotation, const float scale)
     : Component(owner, engine), mPosition(position), mRotation(rotation), mScale(scale)
 {

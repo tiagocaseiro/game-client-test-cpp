@@ -7,7 +7,7 @@
 #include "Component.h"
 
 class HealthComponent;
-class CollisionBoxComponent;
+class CollisionComponent;
 
 namespace King
 {
@@ -23,14 +23,14 @@ public:
                                          const std::unordered_map<std::string, std::string>& parameters);
     ~ScoreOnCollisionComponent();
 
-    void OnCreate() override;
     void OnCollision(int l, int r) override;
 
 private:
     ScoreOnCollisionComponent(GameObjectRef owner, King::Engine& engine, const int score);
+    void OnCreate() override;
 
 private:
     const int mScore;
-    std::weak_ptr<CollisionBoxComponent> mCollisionBoxComponentRef;
+    std::weak_ptr<CollisionComponent> mCollisionComponentRef;
     std::weak_ptr<HealthComponent> mHealthComponentRef;
 };

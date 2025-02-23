@@ -61,7 +61,7 @@ public:
         const std::string& gameObjectTemplateId, const std::string& componentId,
         const std::function<std::shared_ptr<Component>(std::weak_ptr<GameObject>)>& componentInitFunc);
 
-    static std::optional<const GameObjectTemplate> FindGameObjectTemplate(const std::string& gameObjectTemplateId);
+    static const GameObjectTemplate* FindGameObjectTemplate(const std::string& gameObjectTemplateId);
 
 private:
     GameObject(Level& level);

@@ -1,14 +1,14 @@
 // (C) king.com Ltd 2021
 #include "Paddle.h"
 #include "glm/glm.hpp"
-const int kPaddleWidth = 128;
-const int kPaddleHeight = 32;
+const int kPaddleWidth   = 128;
+const int kPaddleHeight  = 32;
 const int kGameAreaWidth = 1024;
 
 Paddle::Paddle(King::Engine& engine) : mEngine(engine), mPaddleTxId(engine.LoadTexture("Paddle.png"))
 {
-    mCollisionBoxId =
-        mEngine.GetCollisionWorld().AddBoxCollider(glm::bvec2(0, 0), glm::vec2(kPaddleWidth, kPaddleHeight), 1 << 1, 0);
+    mCollisionBoxId = mEngine.GetCollisionWorld().AddBoxCollider(
+        glm::bvec2(0, 0), glm::vec2(kPaddleWidth, kPaddleHeight), 1 << 1, 1 << 4);
     mCollisionBox = mEngine.GetCollisionWorld().GetBoxCollider(mCollisionBoxId);
     ResetPosition();
 }

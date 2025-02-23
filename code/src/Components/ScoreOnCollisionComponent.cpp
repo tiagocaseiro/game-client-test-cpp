@@ -23,18 +23,18 @@ ScoreOnCollisionComponent::~ScoreOnCollisionComponent()
 
 void ScoreOnCollisionComponent::OnCreate()
 {
-    mCollisionBoxComponentRef = GetOwnerComponent<CollisionBoxComponent>();
-    mHealthComponentRef       = GetOwnerComponent<HealthComponent>();
+    mCollisionComponentRef = GetOwnerComponent<CollisionComponent>();
+    mHealthComponentRef    = GetOwnerComponent<HealthComponent>();
 }
 
 void ScoreOnCollisionComponent::OnCollision(int l, int r)
 {
-    if(mOwnerRef.expired() || mCollisionBoxComponentRef.expired())
+    if(mOwnerRef.expired() || mCollisionComponentRef.expired())
     {
         return;
     }
 
-    int colliderId = mCollisionBoxComponentRef.lock()->ColliderId();
+    int colliderId = mCollisionComponentRef.lock()->ColliderId();
 
     if((mHealthComponentRef.expired() || mHealthComponentRef.lock()->IsAlive()) && colliderId &&
        (l == colliderId || r == colliderId))

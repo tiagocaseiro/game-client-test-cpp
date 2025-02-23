@@ -31,22 +31,13 @@ void HealthComponent::Decrement(const u32 dec)
 
     mHealth = std::max(mHealth, 0);
 
-    if(IsAlive() == false)
+    std::shared_ptr<GameObject> mOwner = mOwnerRef.lock();
+    if(IsAlive() == false && mOwner)
     {
-        if(std::shared_ptr<GameObject> mOwner = mOwnerRef.lock())
-        {
-            mOwner->MarkForDeath();
-        }
+        mOwner->MarkForDeath();
     }
 
-    GameObjectShared owner = mOwnerRef.lock();
-
-    if(owner == nullptr)
-    {
-        return;
-    }
-
-    if(std::shared_ptr<SpriteComponent> spriteComponent = owner->FindComponent<SpriteComponent>())
+    if(std::shared_ptr<SpriteComponent> spriteComponent = GetOwnerComponent<SpriteComponent>())
     {
         spriteComponent->SetActiveTextureHandle(mMaxHealth - mHealth);
     }

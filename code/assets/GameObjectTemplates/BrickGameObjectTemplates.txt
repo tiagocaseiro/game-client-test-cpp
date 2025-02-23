@@ -14,6 +14,8 @@ componentEnd=
 componentStart=CollisionBoxComponent
 width=64
 height=32
+layer=2
+mask=0
 componentEnd=
 
 componentStart=ScoreOnDestructionComponent

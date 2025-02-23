@@ -60,15 +60,15 @@ void ReadSerializedGameTemplateData(King::Engine& engine, const std::string& fil
         {
             std::string parentGameObjectTemplateId = line.substr(7);
 
-            std::optional<const GameObjectTemplate> parentGameObjectTemplateOpt =
+            const GameObjectTemplate* parentGameObjectTemplate =
                 GameObject::FindGameObjectTemplate(parentGameObjectTemplateId);
 
-            if(parentGameObjectTemplateOpt.has_value() == false)
+            if(parentGameObjectTemplate == nullptr)
             {
                 continue;
             }
 
-            for(const auto& [parentComponentId, parentComponentInitFunc] : *parentGameObjectTemplateOpt)
+            for(const auto& [parentComponentId, parentComponentInitFunc] : *parentGameObjectTemplate)
             {
                 GameObject::AddComponentInitFunc(currentGameObjectTemplateId, parentComponentId,
                                                  parentComponentInitFunc);
@@ -121,10 +121,10 @@ void ReadSerializedGameTemplateData(King::Engine& engine, const std::string& fil
 
 void GamePlayState::Start()
 {
-    ReadSerializedGameTemplateData(mEngine, "./assets/Config/BrickGameObjectTemplates.txt");
-    ReadSerializedGameTemplateData(mEngine, "./assets/Config/PowerUpGameObjectTemplates.txt");
+    ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/BrickGameObjectTemplates.txt");
+    ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/PowerUpGameObjectTemplates.txt");
 
-    mNumBallsLeft = 3;
+    mNumBallsLeft = 999999;
     mLevelClear   = false;
 
     mEngine.GetCollisionWorld().ClearAll();
@@ -138,7 +138,7 @@ void GamePlayState::Start()
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(1024, 0), glm::vec2(20, 2000), 1 << 1, 1 << 2));
 
     mIdOfBottomCollider =
-        mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2);
+        mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2 | 1 << 4);
     mColliders.push_back(mIdOfBottomCollider);
 
     mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, [this](int score) {

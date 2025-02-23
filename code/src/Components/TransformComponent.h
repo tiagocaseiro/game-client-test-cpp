@@ -19,7 +19,7 @@ public:
     float GetScale() const;
 
 private:
-    TransformComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2 position = {},
+    TransformComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2& position = {},
                        const float rotation = 0.0f, const float scale = 1.0f);
 
     glm::vec2 mPosition;

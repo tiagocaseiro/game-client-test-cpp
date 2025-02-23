@@ -36,7 +36,10 @@ GameObjectShared GameObject::MakeGameObject(Level& level, const std::string game
 
     for(const ComponentShared& component : gameObject->mComponents)
     {
-        component->OnCreate();
+        if(component)
+        {
+            component->OnCreate();
+        }
     }
 
     return gameObject;
@@ -52,7 +55,10 @@ void GameObject::AddComponent(std::shared_ptr<Component> newComponent)
 
     for(const std::shared_ptr<Component>& component : mComponents)
     {
-        component->OnComponentAdded(newComponent);
+        if(component)
+        {
+            component->OnComponentAdded(newComponent);
+        }
     }
 }
 
@@ -76,16 +82,16 @@ void GameObject::AddComponentInitFunc(
     it->second = componentInitFunc;
 }
 
-std::optional<const GameObjectTemplate> GameObject::FindGameObjectTemplate(const std::string& id)
+const GameObjectTemplate* GameObject::FindGameObjectTemplate(const std::string& id)
 {
     auto it = sGameObjectTemplates.find(id);
 
     if(it == std::end(sGameObjectTemplates))
     {
-        return std::nullopt;
+        return nullptr;
     }
 
-    return it->second;
+    return &it->second;
 }
 
 void GameObject::MarkForDeath()

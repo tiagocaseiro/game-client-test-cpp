@@ -6,7 +6,7 @@
 
 #include "Component.h"
 
-class CollisionBoxComponent;
+class CollisionComponent;
 class HealthComponent;
 class ScoreComponent;
 
@@ -19,7 +19,6 @@ public:
 
     ~DamageOnCollisionComponent();
 
-    void OnCreate() override;
     void OnCollision(int l, int r) override;
 
     // For debug purposes
@@ -28,6 +27,8 @@ public:
 private:
     DamageOnCollisionComponent(GameObjectRef owner, King::Engine& engine);
 
-    std::weak_ptr<CollisionBoxComponent> mCollisionBoxComponentRef;
+    void OnCreate() override;
+
+    std::weak_ptr<CollisionComponent> mCollisionComponent;
     std::weak_ptr<HealthComponent> mHealthComponentRef;
 };

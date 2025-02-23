@@ -32,38 +32,38 @@ DamageOnCollisionComponent::~DamageOnCollisionComponent()
 
 void DamageOnCollisionComponent::OnCreate()
 {
-    mCollisionBoxComponentRef = GetOwnerComponent<CollisionBoxComponent>();
-    mHealthComponentRef       = GetOwnerComponent<HealthComponent>();
+    mCollisionComponent = GetOwnerComponent<CollisionComponent>();
+    mHealthComponentRef = GetOwnerComponent<HealthComponent>();
 }
 
 void DamageOnCollisionComponent::OnCollision(int l, int r)
 {
-    if(mCollisionBoxComponentRef.expired() || mHealthComponentRef.expired())
+    std::shared_ptr<CollisionComponent> collisionComponent = mCollisionComponent.lock();
+    std::shared_ptr<HealthComponent> healthComponent       = mHealthComponentRef.lock();
+
+    if(collisionComponent == nullptr || healthComponent == nullptr)
     {
         return;
     }
 
-    std::shared_ptr<CollisionBoxComponent> collisionBoxComponent = mCollisionBoxComponentRef.lock();
-
-    std::optional<int> colliderId = collisionBoxComponent->ColliderId();
+    std::optional<int> colliderId = collisionComponent->ColliderId();
 
     if(colliderId && (l == *colliderId || r == *colliderId))
     {
-        std::shared_ptr<HealthComponent> healthComponent = mHealthComponentRef.lock();
         healthComponent->Decrement();
     }
 }
 
 void DamageOnCollisionComponent::DebugHit()
 {
-    if(mCollisionBoxComponentRef.expired())
+    if(mCollisionComponent.expired())
     {
         return;
     }
 
-    std::shared_ptr<CollisionBoxComponent> collisionBoxComponent = mCollisionBoxComponentRef.lock();
+    std::shared_ptr<CollisionComponent> collisionComponent = mCollisionComponent.lock();
 
-    std::optional<int> colliderId = collisionBoxComponent->ColliderId();
+    std::optional<int> colliderId = collisionComponent->ColliderId();
 
     if(colliderId.has_value() == false)
     {
