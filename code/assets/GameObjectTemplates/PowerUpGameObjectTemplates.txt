@@ -12,6 +12,8 @@ componentEnd=
 
 componentStart=RigidBodyComponent
 speed=400
+directionX=0
+directionY=1
 componentEnd=
 
 componentStart=CollisionCircleComponent

@@ -24,12 +24,13 @@ public:
     ~RigidBodyComponent();
 
 private:
-    RigidBodyComponent(GameObjectRef owner, King::Engine& engine, const float speed);
+    RigidBodyComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2& direction, const float speed);
     void OnCreate() override;
     void Update() override;
 
     std::weak_ptr<CollisionComponent> mCollisionComponentRef;
     std::weak_ptr<TransformComponent> mTransformComponentRef;
     King::RigidBody* mRigidBody;
+    const glm::vec2 mDirection;
     const float mSpeed;
 };

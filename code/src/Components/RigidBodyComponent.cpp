@@ -16,17 +16,29 @@ const std::string& RigidBodyComponent::ID()
 ComponentShared RigidBodyComponent::MakeComponent(GameObjectRef owner, King::Engine& engine,
                                                   const std::unordered_map<std::string, std::string>& parameters)
 {
+    glm::vec2 direction;
+    if(auto it = parameters.find("directionX"); it != std::end(parameters))
+    {
+        direction.x = std::stof(it->second);
+    }
+
+    if(auto it = parameters.find("directionY"); it != std::end(parameters))
+    {
+        direction.y = std::stof(it->second);
+    }
+
     float speed = 0.0f;
     if(auto it = parameters.find("speed"); it != std::end(parameters))
     {
         speed = std::stof(it->second);
     }
 
-    return std::shared_ptr<Component>(new RigidBodyComponent(owner, engine, speed));
+    return std::shared_ptr<Component>(new RigidBodyComponent(owner, engine, direction, speed));
 }
 
-RigidBodyComponent::RigidBodyComponent(GameObjectRef owner, King::Engine& engine, const float speed)
-    : Component(owner, engine), mRigidBody(nullptr), mSpeed(speed)
+RigidBodyComponent::RigidBodyComponent(GameObjectRef owner, King::Engine& engine, const glm::vec2& direction,
+                                       const float speed)
+    : Component(owner, engine), mRigidBody(nullptr), mDirection(glm::normalize(direction)), mSpeed(speed)
 {
 }
 
