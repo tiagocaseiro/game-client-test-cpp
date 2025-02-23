@@ -46,9 +46,9 @@ void DamageOnCollisionComponent::OnCollision(int l, int r)
         return;
     }
 
-    std::optional<int> colliderId = collisionComponent->ColliderId();
+    const int colliderId = collisionComponent->ColliderId();
 
-    if(colliderId && (l == *colliderId || r == *colliderId))
+    if(l == colliderId || r == colliderId)
     {
         healthComponent->Decrement();
     }

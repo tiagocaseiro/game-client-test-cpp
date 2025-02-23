@@ -7,9 +7,6 @@ componentEnd=
 componentStart=TransformComponent
 componentEnd=
 
-componentStart=HealthComponent
-componentEnd=
-
 componentStart=RigidBodyComponent
 speed=400
 directionX=0
@@ -22,10 +19,27 @@ layer=16
 mask=0
 componentEnd=
 
-componentStart=DamageOnCollisionComponent
-componentEnd=
-
 id=EnlargePowerUp
 
 parent=BasePowerUp
 
+componentStart=DestroyOnCollisionComponent
+componentEnd=
+
+id=ExtraBallPowerUp
+
+parent=BasePowerUp
+
+componentStart=SpriteComponent
+sprite1=Ball-blue.png
+componentEnd=
+
+componentStart=CollisionCircleComponent
+radius=12
+layer=4
+mask=2
+componentEnd=
+
+componentStart=TransformComponent
+scale=2
+componentEnd=

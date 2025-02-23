@@ -8,10 +8,12 @@ CollisionComponent::CollisionComponent(GameObjectRef owner, King::Engine& engine
     : Component(owner, engine), mPosition(position), mLayer(layer), mMask(mask), mColliderId(-1)
 {
 }
+
 int CollisionComponent::ColliderId() const
 {
     return mColliderId;
 }
+
 void CollisionComponent::SetPosition(const glm::vec2& position)
 {
     mPosition = position;

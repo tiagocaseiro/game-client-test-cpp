@@ -19,16 +19,14 @@ GameObjectShared GameObject::MakeGameObject(Level& level, const std::string game
         return nullptr;
     }
 
-    auto it = sGameObjectTemplates.find(gameObjectTemplateId);
+    const GameObjectTemplate* gameObjectTemplate = FindGameObjectTemplate(gameObjectTemplateId);
 
-    if(it == std::end(sGameObjectTemplates))
+    if(gameObjectTemplate == nullptr)
     {
         return nullptr;
     }
 
-    GameObjectTemplate& gameObjectTemplate = it->second;
-
-    for(const auto& componentInitData : gameObjectTemplate)
+    for(const auto& componentInitData : *gameObjectTemplate)
     {
         const std::function<ComponentShared(GameObjectRef)>& componentInitFunc = componentInitData.second;
         gameObject->AddComponent(componentInitFunc(gameObject));

@@ -11,6 +11,7 @@
 #include "SpawnGameObjectOnDestructionComponent.h"
 #include "SpriteComponent.h"
 #include "TransformComponent.h"
+#include "DestroyOnCollisionComponent.h"
 
 const std::unordered_map<std::string, ComponentInitFunc>& GetComponentInitFuncs()
 {
@@ -25,7 +26,8 @@ const std::unordered_map<std::string, ComponentInitFunc>& GetComponentInitFuncs(
         Component::InitData<ScoreOnCollisionComponent>(),
         Component::InitData<ScoreOnDestructionComponent>(),
         Component::InitData<SpawnGameObjectOnDestructionComponent>(),
-        Component::InitData<RigidBodyComponent>()
+        Component::InitData<RigidBodyComponent>(),
+        Component::InitData<DestroyOnCollisionComponent>()
      };
     // clang-format on
 
