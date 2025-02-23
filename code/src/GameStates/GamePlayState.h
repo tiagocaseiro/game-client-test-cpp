@@ -42,6 +42,8 @@ private:
     void UpdateGameObjects();
     void RenderGameObjects();
 
+    void DebugHitBrick();
+
     King::Engine& mEngine;
     GameEndedFunction mGameEndedFunction;
     LevelShared mLevel;

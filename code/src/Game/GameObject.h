@@ -63,11 +63,12 @@ public:
 
     static const GameObjectTemplate* FindGameObjectTemplate(const std::string& gameObjectTemplateId);
 
+    const std::string mDebugGameObjectTemplateId;
+
 private:
     GameObject(const std::string& debugGameObjectTemplateId, GamePlayState& gameState);
 
     std::vector<std::shared_ptr<Component>> mComponents;
 
-    const std::string mDebugGameObjectTemplateId;
     GamePlayState& mGameState;
 };
