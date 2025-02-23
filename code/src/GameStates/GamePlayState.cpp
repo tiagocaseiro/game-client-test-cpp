@@ -143,6 +143,9 @@ void GamePlayState::Start()
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2 | 1 << 4);
     mColliders.push_back(mIdOfBottomCollider);
 
+    mGameObjects.clear();
+    mGameObjectsToDelete.clear();
+
     mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, *this);
 
     mBGTx = mEngine.LoadTexture(mLevel->Background().c_str());
@@ -241,50 +244,7 @@ void GamePlayState::Update()
         static bool canDebugHit = true;
         if(mEngine.GetKeyDown(SDLK_1) && canDebugHit)
         {
-            if(mGameObjects.empty())
-            {
-                return;
-            }
-
-            for(GameObjectShared& brick : mGameObjects)
-            {
-                if(brick == nullptr)
-                {
-                    continue;
-                }
-
-                std::shared_ptr<CollisionBoxComponent> collisionComponent =
-                    brick->FindComponent<CollisionBoxComponent>();
-                if(collisionComponent == nullptr)
-                {
-                    continue;
-                }
-
-                std::optional<int> colliderId = collisionComponent->ColliderId();
-                if(colliderId.has_value() == false)
-                {
-                    continue;
-                }
-
-                bool isToReturn = false;
-
-                if(std::shared_ptr<DamageOnCollisionComponent> damageOnCollisionComponent =
-                       brick->FindComponent<DamageOnCollisionComponent>())
-                {
-                    isToReturn = true;
-                    damageOnCollisionComponent->OnCollision(*colliderId, *colliderId);
-                }
-
-                if(std::shared_ptr<ScoreOnCollisionComponent> scoreOnCollisionComponent =
-                       brick->FindComponent<ScoreOnCollisionComponent>())
-                {
-                    scoreOnCollisionComponent->OnCollision(*colliderId, *colliderId);
-                }
-                if(isToReturn)
-                {
-                    return;
-                }
-            }
+            DebugHitBrick();
         }
         canDebugHit = mEngine.GetKeyUp(SDLK_1);
 
@@ -343,7 +303,7 @@ void GamePlayState::RenderUI()
     std::optional<Paddle::TimedData> timedData = mPaddle->GetTimedData();
     if(timedData && timedData->timer)
     {
-        RenderUIIndicator(320, "Power-Up", std::to_string(static_cast<unsigned int>(*timedData->timer)));
+        RenderUIIndicator(320, "Power-Up", std::to_string(static_cast<unsigned int>(std::ceilf(*timedData->timer))));
     }
 }
 
@@ -421,6 +381,53 @@ void GamePlayState::RenderGameObjects()
             {
                 component->Render();
             }
+        }
+    }
+}
+
+void GamePlayState::DebugHitBrick()
+{
+    if(mGameObjects.empty())
+    {
+        return;
+    }
+
+    for(GameObjectShared& brick : mGameObjects)
+    {
+        if(brick == nullptr)
+        {
+            continue;
+        }
+
+        std::shared_ptr<CollisionBoxComponent> collisionComponent = brick->FindComponent<CollisionBoxComponent>();
+        if(collisionComponent == nullptr)
+        {
+            continue;
+        }
+
+        std::optional<int> colliderId = collisionComponent->ColliderId();
+        if(colliderId.has_value() == false)
+        {
+            continue;
+        }
+
+        bool isToReturn = false;
+
+        if(std::shared_ptr<DamageOnCollisionComponent> damageOnCollisionComponent =
+               brick->FindComponent<DamageOnCollisionComponent>())
+        {
+            isToReturn = true;
+            damageOnCollisionComponent->OnCollision(*colliderId, *colliderId);
+        }
+
+        if(std::shared_ptr<ScoreOnCollisionComponent> scoreOnCollisionComponent =
+               brick->FindComponent<ScoreOnCollisionComponent>())
+        {
+            scoreOnCollisionComponent->OnCollision(*colliderId, *colliderId);
+        }
+        if(isToReturn)
+        {
+            return;
         }
     }
 }
