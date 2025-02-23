@@ -1,4 +1,4 @@
-id=BasePowerUp
+id=BasePowerUpGameObject
 
 componentStart=SpriteComponent
 sprite1=powerup-large.png
@@ -19,16 +19,22 @@ layer=16
 mask=0
 componentEnd=
 
-id=EnlargePowerUp
+id=EnlargePowerUpGameObject
 
-parent=BasePowerUp
+parent=BasePowerUpGameObject
 
 componentStart=DestroyOnCollisionComponent
 componentEnd=
 
-id=ExtraBallPowerUp
+componentStart=SetPaddleDataComponent
+width=192
+sprite=Paddle-large.png
+timer=60
+componentEnd=
 
-parent=BasePowerUp
+id=ExtraBallPowerUpGameObject
+
+parent=BasePowerUpGameObject
 
 componentStart=SpriteComponent
 sprite1=Ball-blue.png
@@ -43,3 +49,5 @@ componentEnd=
 componentStart=TransformComponent
 scale=2
 componentEnd=
+
+

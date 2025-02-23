@@ -6,13 +6,13 @@
 
 #include "Components/Component.h"
 #include "Components/ComponentInit.h"
-#include "Levels/Level.h"
+#include "GameStates/GamePlayState.h"
 
 static GameObjectTemplates sGameObjectTemplates;
 
-GameObjectShared GameObject::MakeGameObject(Level& level, const std::string gameObjectTemplateId)
+GameObjectShared GameObject::MakeGameObject(GamePlayState& gameState, const std::string gameObjectTemplateId)
 {
-    GameObjectShared gameObject = std::shared_ptr<GameObject>(new GameObject(level));
+    GameObjectShared gameObject = std::shared_ptr<GameObject>(new GameObject(gameObjectTemplateId, gameState));
 
     if(gameObject == nullptr)
     {
@@ -43,7 +43,8 @@ GameObjectShared GameObject::MakeGameObject(Level& level, const std::string game
     return gameObject;
 }
 
-GameObject::GameObject(Level& level) : mLevel(level)
+GameObject::GameObject(const std::string& debugGameObjectTemplateId, GamePlayState& gameState)
+    : mDebugGameObjectTemplateId(debugGameObjectTemplateId), mGameState(gameState)
 {
 }
 
@@ -94,10 +95,10 @@ const GameObjectTemplate* GameObject::FindGameObjectTemplate(const std::string& 
 
 void GameObject::MarkForDeath()
 {
-    mLevel.MarkForDeath(shared_from_this());
+    mGameState.MarkForDeath(shared_from_this());
 }
 
-Level& GameObject::GameLevel()
+GamePlayState& GameObject::GameState()
 {
-    return mLevel;
+    return mGameState;
 }

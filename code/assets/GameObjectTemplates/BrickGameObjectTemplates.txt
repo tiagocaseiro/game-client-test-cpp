@@ -278,7 +278,7 @@ componentStart=DamageOnCollisionComponent
 componentEnd=
 
 componentStart=SpawnGameObjectOnDestructionComponent
-gameObjectTemplateId=EnlargePowerUp
+gameObjectTemplateId=EnlargePowerUpGameObject
 offsetX=20
 offsetY=4
 componentEnd=

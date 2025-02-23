@@ -29,7 +29,7 @@ public:
     void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
     void UpdateScore(int score);
 
-    std::shared_ptr<Paddle> GetPaddle();
+    Paddle* GetPaddle();
 
 private:
     void RenderUI();
@@ -39,6 +39,8 @@ private:
     //
     void OnCollision(int l, int r) override;
     void ResetPaddleAndBall();
+    void UpdateGameObjects();
+    void RenderGameObjects();
 
     King::Engine& mEngine;
     GameEndedFunction mGameEndedFunction;
@@ -46,7 +48,7 @@ private:
     int mBGTx, mPanelTx, mTextFrameTx;
 
     int mScore;
-    std::shared_ptr<Paddle> mPaddle;
+    std::unique_ptr<Paddle> mPaddle;
     std::unique_ptr<Ball> mBall;
 
     std::vector<GameObjectShared> mGameObjects;

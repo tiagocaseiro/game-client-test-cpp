@@ -9,7 +9,7 @@
 #include "Components/ComponentInit.h"
 
 class Component;
-class Level;
+class GamePlayState;
 class GameObject;
 
 namespace King
@@ -23,7 +23,7 @@ using GameObjectShared = std::shared_ptr<GameObject>;
 class GameObject final : public std::enable_shared_from_this<GameObject>
 {
 public:
-    static GameObjectShared MakeGameObject(Level& level, const std::string gameObjectTemplateId);
+    static GameObjectShared MakeGameObject(GamePlayState& gameState, const std::string gameObjectTemplateId);
 
     template <typename T>
     std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> FindComponent()
@@ -53,7 +53,7 @@ public:
     void AddComponent(std::shared_ptr<Component>);
     void MarkForDeath();
 
-    Level& GameLevel();
+    GamePlayState& GameState();
 
     const std::vector<std::shared_ptr<Component>> Components() const;
 
@@ -64,9 +64,10 @@ public:
     static const GameObjectTemplate* FindGameObjectTemplate(const std::string& gameObjectTemplateId);
 
 private:
-    GameObject(Level& level);
+    GameObject(const std::string& debugGameObjectTemplateId, GamePlayState& gameState);
 
     std::vector<std::shared_ptr<Component>> mComponents;
 
-    Level& mLevel;
+    const std::string mDebugGameObjectTemplateId;
+    GamePlayState& mGameState;
 };
