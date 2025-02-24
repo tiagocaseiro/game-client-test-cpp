@@ -84,6 +84,10 @@ CollisionBoxComponent::~CollisionBoxComponent()
 
 glm::vec2 CollisionBoxComponent::ColliderPosition() const
 {
+    if(mBoxCollision)
+    {
+        return mBoxCollision->mTopLeft;
+    }
     return {};
 }
 
@@ -151,14 +155,17 @@ ComponentShared CollisionCircleComponent::MakeComponent(GameObjectRef owner, Kin
 
 glm::vec2 CollisionCircleComponent::ColliderPosition() const
 {
-    if(auto collider = mEngine.GetCollisionWorld().GetCircleCollider(mColliderId))
+    if(mCircleCollision)
     {
-        return collider->mPosition;
+        return mCircleCollision->mPosition;
     }
     return {};
 }
 
-void CollisionCircleComponent::SetPosition(const glm::vec2& /*position*/)
+void CollisionCircleComponent::SetPosition(const glm::vec2& position)
 {
-    // To implement
+    if(mCircleCollision)
+    {
+        mCircleCollision->mPosition = position;
+    }
 }

@@ -63,29 +63,16 @@ void RigidBodyComponent::Update()
     {
         return;
     }
-    std::shared_ptr<CollisionCircleComponent> collisionCircleComponent =
-        collisionComponent->Cast<CollisionCircleComponent>();
-    // TODO: Shouldn't this be on OnCreate?
+
     if(mRigidBody == nullptr)
     {
-        if(collisionCircleComponent)
-        {
-            if(King::CircleCollider* collider = collisionCircleComponent->Collider())
-            {
-                collider->mPosition = transformComponent->GetPosition();
-            }
-        }
-        mRigidBody = mEngine.GetCollisionWorld().AddRigidBody(glm::normalize(glm::vec2(0, 1)) * mSpeed,
-                                                              {collisionComponent->ColliderId()});
 
+        // Collider's starting position match the transformer's
+        collisionComponent->SetPosition(transformComponent->GetPosition());
+        mRigidBody = mEngine.GetCollisionWorld().AddRigidBody(glm::normalize(mDirection) * mSpeed,
+                                                              {collisionComponent->ColliderId()});
         return;
     }
 
-    if(collisionCircleComponent)
-    {
-        if(King::CircleCollider* collider = collisionCircleComponent->Collider())
-        {
-            transformComponent->SetPosition(collider->mPosition);
-        }
-    }
+    transformComponent->SetPosition(collisionComponent->ColliderPosition());
 }
