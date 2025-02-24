@@ -47,6 +47,8 @@ private:
 
     void DebugHitBrick();
 
+    int NumBricks() const;
+
     King::Engine& mEngine;
     GameEndedFunction mGameEndedFunction;
     LevelShared mLevel;
@@ -65,4 +67,5 @@ private:
 
     std::string mLevelFilename;
     bool mLevelClear;
+    bool mCanScore;
 };

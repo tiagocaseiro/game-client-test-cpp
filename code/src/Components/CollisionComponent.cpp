@@ -158,7 +158,7 @@ glm::vec2 CollisionCircleComponent::ColliderPosition() const
     return {};
 }
 
-void CollisionCircleComponent::SetPosition(const glm::vec2& position)
+void CollisionCircleComponent::SetPosition(const glm::vec2& /*position*/)
 {
     // To implement
 }

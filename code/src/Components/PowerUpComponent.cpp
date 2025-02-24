@@ -52,7 +52,11 @@ PaddleResizePowerUpComponent::PaddleResizePowerUpComponent(GameObjectRef owner, 
                                                            const std::optional<int> width,
                                                            const std::optional<int> height,
                                                            const std::optional<int> newTextureHandle)
-    : Component(owner, engine), mTimer(timer), mWidth(width), mHeight(height), mNewTextureHandle(newTextureHandle)
+    : PowerUpComponent(owner, engine),
+      mTimer(timer),
+      mWidth(width),
+      mHeight(height),
+      mNewTextureHandle(newTextureHandle)
 
 {
     mEngine.GetCollisionWorld().AddCollisionListener(*this);
@@ -97,5 +101,5 @@ void PaddleResizePowerUpComponent::OnCollision(int l, int r)
         return;
     }
 
-    paddle->SetTimedData({mTimer, mWidth, mHeight, mNewTextureHandle});
+    paddle->SetPowerUp({mTimer, mWidth, mHeight, mNewTextureHandle});
 }

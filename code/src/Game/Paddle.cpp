@@ -17,7 +17,8 @@ void Paddle::Reset()
 {
     mPosition.x = kGameAreaWidth / 2 - GetWidth() / 2;
     mPosition.y = 900;
-    mTimedData.reset();
+    // Reset active power-up
+    mPowerUp.reset();
 }
 
 void Paddle::Update()
@@ -26,32 +27,21 @@ void Paddle::Update()
 
     mPosition.x = glm::clamp(mPosition.x, 0.0f, static_cast<float>(kGameAreaWidth - GetWidth()));
 
-    mCollisionBox->Set(mPosition, mCollisionBox->mSize);
+    mCollisionBox->Set(mPosition, {GetWidth(), GetHeight()});
 
-    if(mTimedData == std::nullopt)
+    if(mPowerUp && mPowerUp->timer)
     {
-        return;
-    }
-    if(mTimedData->timer)
-    {
-        *mTimedData->timer -= mEngine.GetLastFrameSeconds();
-        if(mTimedData->timer <= 0)
+        *mPowerUp->timer -= mEngine.GetLastFrameSeconds();
+        if(mPowerUp->timer <= 0)
         {
-            mTimedData.reset();
+            mPowerUp.reset();
         }
     }
 }
 
 void Paddle::Render() const
 {
-    int textureHandle = mPaddleTxId;
-
-    if(mTimedData && mTimedData->newTextureHandle)
-    {
-        textureHandle = *mTimedData->newTextureHandle;
-    }
-
-    mEngine.Render(textureHandle, mPosition.x, mPosition.y, 0, 2);
+    mEngine.Render(GetTextureHandle(), mPosition.x, mPosition.y, 0, 2);
 }
 
 glm::vec2 Paddle::GetCenter() const
@@ -61,6 +51,10 @@ glm::vec2 Paddle::GetCenter() const
 
 int Paddle::GetTextureHandle() const
 {
+    if(mPowerUp && mPowerUp->newTextureHandle)
+    {
+        return *mPowerUp->newTextureHandle;
+    }
     return mPaddleTxId;
 }
 
@@ -69,25 +63,22 @@ void Paddle::SetTextureHandle(const int textureHandle)
     mPaddleTxId = textureHandle;
 }
 
-void Paddle::SetTimedData(Paddle::TimedData timedData)
+void Paddle::SetPowerUp(Paddle::PowerUp powerUp)
 {
-    if(mTimedData)
+    if(mPowerUp)
     {
-        timedData.timer = mTimedData->timer.value_or(0) + timedData.timer.value_or(0);
+        // Increase new timer with the already existing one's
+        powerUp.timer = mPowerUp->timer.value_or(0) + powerUp.timer.value_or(0);
     }
-    mTimedData = timedData;
-    // assert(!"Update COLLISION BOX!");
-    if(mCollisionBox)
-    {
-    }
+    mPowerUp = powerUp;
 }
 
 int Paddle::GetWidth() const
 {
     static constexpr int kPaddleWidth = 128;
-    if(mTimedData && mTimedData->width)
+    if(mPowerUp && mPowerUp->width)
     {
-        return *mTimedData->width;
+        return *mPowerUp->width;
     }
 
     return kPaddleWidth;
@@ -96,15 +87,15 @@ int Paddle::GetWidth() const
 int Paddle::GetHeight() const
 {
     static constexpr int kPaddleHeight = 32;
-    if(mTimedData && mTimedData->height)
+    if(mPowerUp && mPowerUp->height)
     {
-        return *mTimedData->height;
+        return *mPowerUp->height;
     }
 
     return kPaddleHeight;
 }
 
-std::optional<Paddle::TimedData> Paddle::GetTimedData()
+std::optional<Paddle::PowerUp> Paddle::GetPowerUp() const
 {
-    return mTimedData;
+    return mPowerUp;
 }

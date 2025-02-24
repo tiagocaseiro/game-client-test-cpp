@@ -11,9 +11,9 @@
 #include "Components/Component.h"
 #include "Components/DamageOnCollisionComponent.h"
 #include "Components/HealthComponent.h"
+#include "Components/PowerUpComponent.h"
 #include "Components/ScoreOnCollisionComponent.h"
 #include "Components/ScoreOnDestructionComponent.h"
-#include "Components/SetPaddleDataComponent.h"
 #include "Components/SpawnGameObjectOnDestructionComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
@@ -30,12 +30,13 @@ GamePlayState::GamePlayState(King::Engine& engine, GameEndedFunction gameEndedFu
       mBGTx(mEngine.LoadTexture("Background-01.png")),
       mPanelTx(mEngine.LoadTexture("Panel.png")),
       mTextFrameTx(mEngine.LoadTexture("Text-frame.png")),
-      mScore(0)
+      mScore(0),
+      mCanScore(false)
 {
     mEngine.GetCollisionWorld().AddCollisionListener(*this);
 }
 
-void ReadSerializedGameTemplateData(King::Engine& engine, const std::string& filePath)
+void ReadSerializedGameObjectTemplates(King::Engine& engine, const std::string& filePath)
 {
     std::ifstream configFile(filePath);
 
@@ -123,16 +124,30 @@ void ReadSerializedGameTemplateData(King::Engine& engine, const std::string& fil
 
 void GamePlayState::Start()
 {
-    // Due to the debugging commands, it's necessary this extra removal step
-    MarkAllGameObjectsForRemove();
-    ClearRemovedObjects();
+    // mCanScore flag prevents score updates from happening when deleting objects from previous session that score when
+    // destroyed
+    mCanScore = false;
 
-    ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/BrickGameObjectTemplates.txt");
-    ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/PowerUpGameObjectTemplates.txt");
+    while(mGameObjects.empty() == false || mGameObjectsToDelete.empty() == false)
+    {
+        // ClearRemovedObjects destroys GameObjects that can lead to the creation of other GameObjects (due to holding a
+        // SpawnGameObjectOnDestructionComponent)
+        // So, we might need to run multiple iterations of this to make sure that all subsequent GameObjects that are
+        // created are deleted
+        // Destroying these objects is also necessary because of after this will be clearing all colliders and some of
+        // these objects would be holding RigidBodies with no matching collider, which would lead to a crash
+        MarkAllGameObjectsForRemove();
+        ClearRemovedObjects();
+    }
+
+    ReadSerializedGameObjectTemplates(mEngine, "./assets/GameObjectTemplates/BrickGameObjectTemplates.txt");
+    ReadSerializedGameObjectTemplates(mEngine, "./assets/GameObjectTemplates/PowerUpGameObjectTemplates.txt");
 
     mNumBallsLeft = 3;
     mLevelClear   = false;
 
+    // This ClearAll gave me a lot of trouble
+    // The responsibility of clearing collision data should be delegated instead of centralized like this
     mEngine.GetCollisionWorld().ClearAll();
 
     mPaddle = std::make_unique<Paddle>(mEngine);
@@ -156,6 +171,8 @@ void GamePlayState::Start()
 
     ResetPaddleAndBall();
     mEngine.SetCursorVisible(false);
+
+    mCanScore = true;
 }
 
 void GamePlayState::ResetPaddleAndBall()
@@ -235,24 +252,28 @@ void GamePlayState::Update()
             MarkAllGameObjectsForRemove();
         }
 
+        // Flag is necessary to handle it only as an OnRelease of 1 key
         static bool canDebugHit = true;
         if(mEngine.GetKeyDown(SDLK_1) && canDebugHit)
         {
+            // Simulate hitting first available brick
             DebugHitBrick();
         }
         canDebugHit = mEngine.GetKeyUp(SDLK_1);
+
+        // Hit first brick while holding down 2 key
+        if(mEngine.GetKeyDown(SDLK_2))
+        {
+            // Simulate hitting first available brick
+            DebugHitBrick();
+        }
 
         if(mEngine.GetMouseButtonPressed())
         {
             mBall->SetStatic(false);
         }
 
-        const int numBricksLeft =
-            std::count_if(std::begin(mGameObjects), std::end(mGameObjects), [](const GameObjectRef& gameObjectShared) {
-                return gameObjectShared.expired() == false && gameObjectShared.lock()->HasComponent<HealthComponent>();
-            });
-
-        if(numBricksLeft == 0)
+        if(NumBricks() == 0)
         {
             mLevelClear = true;
             mBall->SetLevelClear(true);
@@ -292,7 +313,7 @@ void GamePlayState::RenderUI()
     RenderUIIndicator(20, "Current Level", mLevel->Name());
     RenderUIIndicator(120, "Balls", std::to_string(mNumBallsLeft - 1));
     RenderUIIndicator(220, "Score", std::to_string(mScore));
-    std::optional<Paddle::TimedData> timedData = mPaddle->GetTimedData();
+    std::optional<Paddle::PowerUp> timedData = mPaddle->GetPowerUp();
     if(timedData && timedData->timer)
     {
         RenderUIIndicator(320, "Power-Up", std::to_string(static_cast<unsigned int>(std::ceilf(*timedData->timer))));
@@ -338,7 +359,8 @@ void GamePlayState::End()
     mColliders.clear();
 
     // Can't remove game objects immediately because this can be called while iterating CollisionWorld::mListeners
-    // which would invalidate pointers in said container and resize it
+    // which would invalidate pointers in said container and possibly resize it, if new GameObjects are created on
+    // destruction
     MarkAllGameObjectsForRemove();
 }
 
@@ -354,7 +376,10 @@ void GamePlayState::MarkForDeath(const std::shared_ptr<GameObject>& gameObject)
 
 void GamePlayState::UpdateScore(int score)
 {
-    mScore += score;
+    if(mCanScore)
+    {
+        mScore += score;
+    }
 }
 
 Paddle* GamePlayState::GetPaddle()
@@ -426,6 +451,13 @@ void GamePlayState::DebugHitBrick()
             return;
         }
     }
+}
+
+int GamePlayState::NumBricks() const
+{
+    return std::count_if(std::begin(mGameObjects), std::end(mGameObjects), [](const GameObjectRef& gameObjectShared) {
+        return gameObjectShared.expired() == false && gameObjectShared.lock()->HasComponent<HealthComponent>();
+    });
 }
 
 void GamePlayState::ClearRemovedObjects()

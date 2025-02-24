@@ -13,7 +13,7 @@ class Paddle
 {
 
 public:
-    struct TimedData
+    struct PowerUp
     {
         std::optional<float> timer;
         std::optional<int> width;
@@ -34,13 +34,11 @@ public:
     int GetTextureHandle() const;
 
     void SetTextureHandle(const int textureHandle);
-    void Paddle::SetTimedData(TimedData timedData);
+    void Paddle::SetPowerUp(PowerUp powerUp);
 
-    std::optional<TimedData> GetTimedData();
+    std::optional<PowerUp> GetPowerUp() const;
 
 private:
-    void InitCollisionData();
-
     int GetWidth() const;
     int GetHeight() const;
 
@@ -49,5 +47,5 @@ private:
     glm::vec2 mPosition;
     King::BoxCollider* mCollisionBox;
     int mCollisionBoxId, mPaddleTxId;
-    std::optional<TimedData> mTimedData;
+    std::optional<PowerUp> mPowerUp;
 };
