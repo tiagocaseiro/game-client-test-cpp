@@ -1,4 +1,4 @@
-#include "SetPaddleDataComponent.h"
+#include "PowerUpComponent.h"
 
 #include <king/Engine.h>
 
@@ -8,14 +8,14 @@
 #include "GameStates/GamePlayState.h"
 #include "HealthComponent.h"
 
-const std::string& SetPaddleDataComponent::ID()
+const std::string& PaddleResizePowerUpComponent::ID()
 {
-    static const std::string id = "SetPaddleDataComponent";
+    static const std::string id = "PaddleResizePowerUpComponent";
     return id;
 }
 
-ComponentShared SetPaddleDataComponent::MakeComponent(GameObjectRef owner, King::Engine& engine,
-                                                      const std::unordered_map<std::string, std::string>& parameters)
+ComponentShared PaddleResizePowerUpComponent::MakeComponent(
+    GameObjectRef owner, King::Engine& engine, const std::unordered_map<std::string, std::string>& parameters)
 {
     std::optional<float> timer;
     std::optional<int> width;
@@ -44,31 +44,32 @@ ComponentShared SetPaddleDataComponent::MakeComponent(GameObjectRef owner, King:
     }
 
     return std::shared_ptr<Component>(
-        new SetPaddleDataComponent(owner, engine, timer, width, height, newTextureHandle));
+        new PaddleResizePowerUpComponent(owner, engine, timer, width, height, newTextureHandle));
 }
 
-SetPaddleDataComponent::SetPaddleDataComponent(GameObjectRef owner, King::Engine& engine,
-                                               const std::optional<float> timer, const std::optional<int> width,
-                                               const std::optional<int> height,
-                                               const std::optional<int> newTextureHandle)
+PaddleResizePowerUpComponent::PaddleResizePowerUpComponent(GameObjectRef owner, King::Engine& engine,
+                                                           const std::optional<float> timer,
+                                                           const std::optional<int> width,
+                                                           const std::optional<int> height,
+                                                           const std::optional<int> newTextureHandle)
     : Component(owner, engine), mTimer(timer), mWidth(width), mHeight(height), mNewTextureHandle(newTextureHandle)
 
 {
     mEngine.GetCollisionWorld().AddCollisionListener(*this);
 }
 
-SetPaddleDataComponent::~SetPaddleDataComponent()
+PaddleResizePowerUpComponent::~PaddleResizePowerUpComponent()
 {
     mEngine.GetCollisionWorld().RemoveCollisionListener(*this);
 }
 
-void SetPaddleDataComponent::OnCreate()
+void PaddleResizePowerUpComponent::OnCreate()
 {
 
     mCollisionComponentRef = GetOwnerComponent<CollisionComponent>();
 }
 
-void SetPaddleDataComponent::OnCollision(int l, int r)
+void PaddleResizePowerUpComponent::OnCollision(int l, int r)
 {
     std::shared_ptr<CollisionComponent> collisionComponent = mCollisionComponentRef.lock();
     std::shared_ptr<GameObject> owner                      = mOwnerRef.lock();

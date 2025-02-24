@@ -6,9 +6,9 @@
 
 namespace
 {
-const float kSpeed = 10.0f;
-const float kRadius = 12.0f;
-const float kBounceLimit = 0.3f;
+    const float kSpeed       = 10.0f;
+    const float kRadius      = 12.0f;
+    const float kBounceLimit = 0.3f;
 } // namespace
 
 Ball::Ball(King::Engine& engine) : mEngine(engine), mBallTxId(mEngine.LoadTexture("Ball-yellow.png"))
@@ -37,7 +37,7 @@ bool Ball::IsStatic() const
 
 void Ball::SetPos(float posX, float posY)
 {
-    auto collider = mEngine.GetCollisionWorld().GetCircleCollider(mBallColliderId);
+    auto collider         = mEngine.GetCollisionWorld().GetCircleCollider(mBallColliderId);
     collider->mPosition.x = posX;
     collider->mPosition.y = posY;
 }
@@ -51,9 +51,9 @@ void Ball::Update()
 {
     if(mIsLevelClear)
     {
-        float slowDown = mEngine.GetLastFrameSeconds() * 500.0f;
-        float currentSpeed = glm::length(mRigidBody->mMovement);
-        currentSpeed = glm::max(0.0f, currentSpeed - slowDown);
+        float slowDown        = mEngine.GetLastFrameSeconds() * 500.0f;
+        float currentSpeed    = glm::length(mRigidBody->mMovement);
+        currentSpeed          = glm::max(0.0f, currentSpeed - slowDown);
         mRigidBody->mMovement = glm::normalize(mRigidBody->mMovement) * currentSpeed;
     }
 
@@ -73,14 +73,14 @@ void Ball::Render() const
 void Ball::OnCollision(int l, int r)
 {
     auto paddleColliderId = mPaddle->GetColliderId();
-    bool hitPaddle = paddleColliderId == l || paddleColliderId == r;
-    bool hitBall = mBallColliderId == l || mBallColliderId == r;
+    bool hitPaddle        = paddleColliderId == l || paddleColliderId == r;
+    bool hitBall          = mBallColliderId == l || mBallColliderId == r;
 
     if(hitPaddle && hitBall)
     {
         auto direction = glm::normalize(mRigidBody->mMovement);
-        auto length = glm::length(mRigidBody->mMovement);
-        auto collider = mEngine.GetCollisionWorld().GetCircleCollider(mBallColliderId);
+        auto length    = glm::length(mRigidBody->mMovement);
+        auto collider  = mEngine.GetCollisionWorld().GetCircleCollider(mBallColliderId);
         direction.x += (collider->mPosition.x - mPaddle->GetCenter().x) * 0.01f;
         mRigidBody->mMovement = glm::normalize(direction) * length;
     }
@@ -88,7 +88,7 @@ void Ball::OnCollision(int l, int r)
     if(hitBall && !mIsLevelClear)
     {
         auto direction = glm::normalize(mRigidBody->mMovement);
-        auto length = glm::length(mRigidBody->mMovement) + 1.0f;
+        auto length    = glm::length(mRigidBody->mMovement) + 1.0f;
 
         // Prevent very shallow bouncing angles
         float bounceMagnitude = glm::abs(glm::dot(glm::vec2(0.0f, 1.0f), direction));

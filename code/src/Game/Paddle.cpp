@@ -7,7 +7,9 @@ const int kGameAreaWidth = 1024;
 Paddle::Paddle(King::Engine& engine)
     : mEngine(engine), mPaddleTxId(engine.LoadTexture("Paddle.png")), mCollisionBoxId(-1), mCollisionBox(nullptr)
 {
-    InitCollisionData();
+    mCollisionBoxId = mEngine.GetCollisionWorld().AddBoxCollider(glm::bvec2(0, 0), glm::vec2(GetWidth(), GetHeight()),
+                                                                 1 << 1, 1 << 4);
+    mCollisionBox   = mEngine.GetCollisionWorld().GetBoxCollider(mCollisionBoxId);
     Reset();
 }
 
@@ -70,20 +72,10 @@ void Paddle::SetTextureHandle(const int textureHandle)
 void Paddle::SetTimedData(Paddle::TimedData timedData)
 {
     mTimedData = timedData;
-    InitCollisionData();
-}
-
-void Paddle::InitCollisionData()
-{
-    if(mCollisionBoxId != -1)
+    if(mCollisionBox)
     {
-        mEngine.GetCollisionWorld().RemoveBoxCollider(mCollisionBoxId);
-        mCollisionBox = nullptr;
+        // mCollisionBox->Set(mCollisionBox->, {});
     }
-
-    mCollisionBoxId = mEngine.GetCollisionWorld().AddBoxCollider(glm::bvec2(0, 0), glm::vec2(GetWidth(), GetHeight()),
-                                                                 1 << 1, 1 << 4);
-    mCollisionBox   = mEngine.GetCollisionWorld().GetBoxCollider(mCollisionBoxId);
 }
 
 int Paddle::GetWidth() const

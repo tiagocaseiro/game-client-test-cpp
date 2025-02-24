@@ -14,12 +14,6 @@ int CollisionComponent::ColliderId() const
     return mColliderId;
 }
 
-void CollisionComponent::SetPosition(const glm::vec2& position)
-{
-    mPosition = position;
-    InitCollisionId();
-}
-
 const std::string& CollisionBoxComponent::ID()
 {
     static const std::string id = "CollisionBoxComponent";
@@ -69,15 +63,15 @@ ComponentShared CollisionBoxComponent::MakeComponent(GameObjectRef owner, King::
 CollisionBoxComponent::CollisionBoxComponent(GameObjectRef owner, King::Engine& engine, const unsigned int layer,
                                              const unsigned int mask, const glm::vec2& position,
                                              const glm::vec2& dimensions)
-    : CollisionComponent(owner, engine, position, layer, mask), mDimensions(dimensions)
+    : CollisionComponent(owner, engine, position, layer, mask), mDimensions(dimensions), mBoxCollision(nullptr)
 {
-    InitCollisionId();
+    mColliderId   = mEngine.GetCollisionWorld().AddBoxCollider(mPosition, mDimensions, mLayer, mMask);
+    mBoxCollision = mEngine.GetCollisionWorld().GetBoxCollider(mColliderId);
 }
 
 void CollisionBoxComponent::SetDimensions(const glm::vec2& dimensions)
 {
     mDimensions = dimensions;
-    InitCollisionId();
 }
 
 CollisionBoxComponent::~CollisionBoxComponent()
@@ -88,23 +82,17 @@ CollisionBoxComponent::~CollisionBoxComponent()
     }
 }
 
-void CollisionBoxComponent::InitCollisionId()
-{
-    if(mColliderId)
-    {
-        mEngine.GetCollisionWorld().RemoveBoxCollider(mColliderId);
-    }
-    mColliderId = mEngine.GetCollisionWorld().AddBoxCollider(mPosition, mDimensions, mLayer, mMask);
-}
-
-void CollisionBoxComponent::OnCreate()
-{
-    InitCollisionId();
-}
-
 glm::vec2 CollisionBoxComponent::ColliderPosition() const
 {
     return {};
+}
+
+void CollisionBoxComponent::SetPosition(const glm::vec2& position)
+{
+    if(mBoxCollision)
+    {
+        mBoxCollision->Set(position, mBoxCollision->mSize);
+    }
 }
 
 CollisionCircleComponent::~CollisionCircleComponent()
@@ -116,6 +104,15 @@ const std::string& CollisionCircleComponent::ID()
 {
     static const std::string id = "CollisionCircleComponent";
     return id;
+}
+
+CollisionCircleComponent::CollisionCircleComponent(GameObjectRef owner, King::Engine& engine, const unsigned int layer,
+                                                   const unsigned int mask, const glm::vec2& position,
+                                                   const float radius)
+    : CollisionComponent(owner, engine, position, layer, mask), mRadius(radius), mCircleCollision(nullptr)
+{
+    mColliderId      = mEngine.GetCollisionWorld().AddCircleCollider(mPosition, mRadius, mLayer, mMask);
+    mCircleCollision = mEngine.GetCollisionWorld().GetCircleCollider(mColliderId);
 }
 
 ComponentShared CollisionCircleComponent::MakeComponent(GameObjectRef owner, King::Engine& engine,
@@ -152,13 +149,6 @@ ComponentShared CollisionCircleComponent::MakeComponent(GameObjectRef owner, Kin
     return std::shared_ptr<Component>(new CollisionCircleComponent(owner, engine, layer, mask, position, radius));
 }
 
-CollisionCircleComponent::CollisionCircleComponent(GameObjectRef owner, King::Engine& engine, const unsigned int layer,
-                                                   const unsigned int mask, const glm::vec2& position,
-                                                   const float radius)
-    : CollisionComponent(owner, engine, position, layer, mask), mRadius(radius)
-{
-}
-
 glm::vec2 CollisionCircleComponent::ColliderPosition() const
 {
     if(auto collider = mEngine.GetCollisionWorld().GetCircleCollider(mColliderId))
@@ -168,17 +158,7 @@ glm::vec2 CollisionCircleComponent::ColliderPosition() const
     return {};
 }
 
-void CollisionCircleComponent::InitCollisionId()
+void CollisionCircleComponent::SetPosition(const glm::vec2& position)
 {
-    if(mColliderId)
-    {
-        mEngine.GetCollisionWorld().RemoveCircleCollider(mColliderId);
-    }
-    mColliderId = mEngine.GetCollisionWorld().AddCircleCollider(mPosition, mRadius, mLayer, mMask);
-}
-
-void CollisionCircleComponent::OnCreate()
-
-{
-    InitCollisionId();
+    // To implement
 }

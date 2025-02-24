@@ -28,6 +28,7 @@ public:
     void MarkForDeath(const std::shared_ptr<GameObject>& gameObject);
     void AddGameObject(const std::shared_ptr<GameObject>& gameObject);
     void UpdateScore(int score);
+    void ClearRemovedObjects();
 
     Paddle* GetPaddle();
 
@@ -41,6 +42,8 @@ private:
     void ResetPaddleAndBall();
     void UpdateGameObjects();
     void RenderGameObjects();
+
+    void MarkAllGameObjectsForRemove();
 
     void DebugHitBrick();
 

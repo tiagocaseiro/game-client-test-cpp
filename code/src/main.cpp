@@ -20,6 +20,9 @@ public:
     {
 
         mMainMenuState = std::make_unique<GameMainMenuState>(mEngine, [&]() {
+            // Necessary to have this called before resetting the score, otherwise the destruction of the bricks will
+            // increase the score (maybe we should have a flag that indicates that the game has started?)
+            mPlayState->ClearRemovedObjects();
             mPlayState->ResetScore();
             mPlayState->SetLevelFilename("./assets/Levels/Level1.txt");
             SetGameState(mPlayState.get());

@@ -123,6 +123,10 @@ void ReadSerializedGameTemplateData(King::Engine& engine, const std::string& fil
 
 void GamePlayState::Start()
 {
+    // Due to the debugging commands, it's necessary this extra removal step
+    MarkAllGameObjectsForRemove();
+    ClearRemovedObjects();
+
     ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/BrickGameObjectTemplates.txt");
     ReadSerializedGameTemplateData(mEngine, "./assets/GameObjectTemplates/PowerUpGameObjectTemplates.txt");
 
@@ -143,9 +147,6 @@ void GamePlayState::Start()
         mEngine.GetCollisionWorld().AddBoxCollider(glm::vec2(-10, 1024), glm::vec2(1044, 20), 1 << 1, 1 << 2 | 1 << 4);
     mColliders.push_back(mIdOfBottomCollider);
 
-    mGameObjects.clear();
-    mGameObjectsToDelete.clear();
-
     mLevel = LevelLoader::LoadLevel(mLevelFilename, mEngine, *this);
 
     mBGTx = mEngine.LoadTexture(mLevel->Background().c_str());
@@ -163,7 +164,8 @@ void GamePlayState::ResetPaddleAndBall()
 
     for(const std::shared_ptr<GameObject>& gameObject : mGameObjects)
     {
-        if(gameObject && gameObject->HasComponent<SetPaddleDataComponent>())
+        // Clean screen of power-ups dropping
+        if(gameObject && gameObject->HasComponent<PowerUpComponent>())
         {
             gameObject->MarkForDeath();
         }
@@ -202,16 +204,7 @@ void GamePlayState::UpdateGameObjects()
         it++;
     }
 
-    for(const GameObjectShared& gameObject : mGameObjectsToDelete)
-    {
-        for(const ComponentShared& component : gameObject->Components())
-        {
-            if(component)
-            {
-                component->OnDestroyed();
-            }
-        }
-    }
+    ClearRemovedObjects();
 }
 
 void GamePlayState::Update()
@@ -238,7 +231,8 @@ void GamePlayState::Update()
         // Cheat!
         if(mEngine.GetKeyDown(SDLK_w))
         {
-            mGameObjects.clear();
+            // Call regular marking of objects for removal so they follow their normal OnDestroyed procedures
+            MarkAllGameObjectsForRemove();
         }
 
         static bool canDebugHit = true;
@@ -268,8 +262,6 @@ void GamePlayState::Update()
     mPaddle->Update();
     mBall->Update();
     UpdateGameObjects();
-
-    mGameObjectsToDelete.clear();
 }
 
 void GamePlayState::Render()
@@ -344,6 +336,10 @@ void GamePlayState::End()
         mEngine.GetCollisionWorld().RemoveBoxCollider(collider);
     }
     mColliders.clear();
+
+    // Can't remove game objects immediately because this can be called while iterating CollisionWorld::mListeners
+    // which would invalidate pointers in said container and resize it
+    MarkAllGameObjectsForRemove();
 }
 
 void GamePlayState::AddGameObject(const std::shared_ptr<GameObject>& gameObject)
@@ -430,4 +426,32 @@ void GamePlayState::DebugHitBrick()
             return;
         }
     }
+}
+
+void GamePlayState::ClearRemovedObjects()
+{
+    for(const std::shared_ptr<GameObject>& gameObject : mGameObjectsToDelete)
+    {
+        if(gameObject == nullptr)
+        {
+            continue;
+        }
+        for(const std::shared_ptr<Component>& component : gameObject->Components())
+        {
+            if(component)
+            {
+                component->OnDestroyed();
+            }
+        }
+    }
+    mGameObjectsToDelete.clear();
+}
+
+void GamePlayState::MarkAllGameObjectsForRemove()
+{
+    for(const std::shared_ptr<GameObject>& gameObject : mGameObjects)
+    {
+        mGameObjectsToDelete.insert(gameObject);
+    }
+    mGameObjects.clear();
 }
