@@ -1,7 +1,9 @@
 # Information for reviewers
 
 For this exercise, I decided to turn the classes in the /Games folder into a composition of self-contained Components, also known as GameObjects.
+
 A **GameObject** is any entity that's part of the gameplay experience (e.g., Brick, Paddle, Ball, Power-Up), but instead of relying on concrete classes to describe each in-game entity, these same enties were broken donw into small **Components** that hold the necessary information to give our GameObjects some sort of behavior.
+
 So a GameObject is just a container of differents Components that, when used together, give a GameObjects its characteristics.
 
 ## GameObject Implementation
@@ -9,6 +11,7 @@ A GameObject simply consist of a container of Components.
 
 ### Example
 A normal Brick GameObject would contain a HealthComponent which would be responsible for holding the information regarding how many hits points it has left. 
+
 The HealthComponent would mark its GameObject for destruction when its health ticks all the way down to 0.
 
 ## Component Implementation
@@ -119,4 +122,5 @@ In code, a GameObjectTemplate is just a map that holds pairs of GameObjectTempla
 ## Limitations
 The initial goal of this side project was to break all the main gameplay concepts into GameObjects but due to time constraints and risk mitigation only Bricks and Power-Ups were covered by this change.
 All Brick definitions can be found in the BrickGameObjectTemplates.txt file and PowerUps can be found in the PowerUpGameObjectTemplates.txt file.
+
 This solution was developed and tested only on Windows 11.
