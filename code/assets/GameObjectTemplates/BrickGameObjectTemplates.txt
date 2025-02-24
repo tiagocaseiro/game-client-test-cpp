@@ -128,7 +128,7 @@ score=10
 componentEnd=
 
 componentStart=HealthComponent
- componentEnd=
+componentEnd=
 
 id=2
 
