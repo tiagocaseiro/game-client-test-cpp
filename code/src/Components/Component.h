@@ -22,10 +22,15 @@ public:
 
     virtual ~Component() = default;
 
+    // Called when GameObject's initial set of Components is initialized
     virtual void OnCreate();
+    // Called every GameState Render call
     virtual void Render();
+    // Called every GameState Update call
     virtual void Update();
+    // Called right before destructor is called
     virtual void OnDestroyed();
+    // Called when a new sibling component is Added to GameObject
     virtual void OnComponentAdded(std::shared_ptr<Component>);
 
     template <typename T>
