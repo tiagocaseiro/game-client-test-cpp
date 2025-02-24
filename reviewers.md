@@ -1,6 +1,9 @@
 # Information for reviewers
 
 For this exercise, the approach was to turn each class in the /Games folder into a composition of self-contained Components, also known as GameObjects.
+It's an ECS-like approach of breaking concepts into small and reusable Components.
+
+Unlike pure ECS, the components for this exercise don't just hold data but are able to execute their own behavior.
 
 A **GameObject** is any entity that's part of the gameplay experience (e.g., Brick, Paddle, Ball, Power-Up), but instead of relying on concrete classes to describe each in-game entity, these same enties were broken donw into small **Components** that hold the necessary information to give our GameObjects some sort of behavior.
 
@@ -123,7 +126,7 @@ In code, a GameObjectTemplate is just a map that holds pairs of GameObjectTempla
 The initial goal of this side project was to break all the main gameplay concepts into GameObjects but due to time constraints and risk mitigation only Bricks and Power-Ups were covered by this change.
 All Brick definitions can be found in the BrickGameObjectTemplates.txt file and PowerUps can be found in the PowerUpGameObjectTemplates.txt file.
 
-Out of convenience GameObjectTemplate ids for Bricks match the tile entries on the Level.txt files, instead of following the \<Name\>GameObject format (e.g., p instead of PinkBrickGameObject).
+Out of convenience, GameObjectTemplate ids for Bricks match the tile entries on the LevelN.txt files, instead of following the \<Name\>GameObject format (e.g., p instead of PinkBrickGameObject).
 
 This solution was developed and tested only on Windows 11.
 
