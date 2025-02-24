@@ -123,6 +123,8 @@ In code, a GameObjectTemplate is just a map that holds pairs of GameObjectTempla
 The initial goal of this side project was to break all the main gameplay concepts into GameObjects but due to time constraints and risk mitigation only Bricks and Power-Ups were covered by this change.
 All Brick definitions can be found in the BrickGameObjectTemplates.txt file and PowerUps can be found in the PowerUpGameObjectTemplates.txt file.
 
+Out of convenience GameObjectTemplate ids for Bricks match the tile entries on the Level.txt files, instead of following the \<Name\>GameObject format (e.g., p instead of PinkBrickGameObject).
+
 This solution was developed and tested only on Windows 11.
 
 ## Debug commands
