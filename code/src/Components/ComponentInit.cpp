@@ -17,6 +17,7 @@
 const std::unordered_map<std::string, ComponentInitFunc>& GetComponentInitFuncs()
 {
     // clang-format off
+    // Map that contains the Name of the Component and the initialization function that is able to create a new instance from the serialized data
    static const std::unordered_map<std::string, ComponentInitFunc> sComponentTypesInitFuncs = {
         Component::InitData<SpriteComponent>(),          
         Component::InitData<HealthComponent>(),

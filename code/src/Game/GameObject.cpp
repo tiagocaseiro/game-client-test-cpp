@@ -8,6 +8,8 @@
 #include "Components/ComponentInit.h"
 #include "GameStates/GamePlayState.h"
 
+// Map that holds a pairs of GameObjectTemplate ids and all of the initialization functions necessary to create each
+// Component
 static GameObjectTemplates sGameObjectTemplates;
 
 GameObjectShared GameObject::MakeGameObject(GamePlayState& gameState, const std::string gameObjectTemplateId)
