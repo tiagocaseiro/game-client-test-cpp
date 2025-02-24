@@ -124,3 +124,8 @@ The initial goal of this side project was to break all the main gameplay concept
 All Brick definitions can be found in the BrickGameObjectTemplates.txt file and PowerUps can be found in the PowerUpGameObjectTemplates.txt file.
 
 This solution was developed and tested only on Windows 11.
+
+## Debug commands
+Press 1 key to hit one brick.
+
+Hold down 2 key to continuously hit bricks.
