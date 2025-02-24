@@ -43,9 +43,6 @@ componentStart=ScoreOnCollisionComponent
 score=10
 componentEnd=
 
-componentStart=HealthComponent
-componentEnd=
-
 id=r
 
 parent=BaseBrickGameObject
