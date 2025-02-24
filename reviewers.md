@@ -1,6 +1,6 @@
 # Information for reviewers
 
-For this exercise, I decided to turn the classes in the /Games folder into a composition of self-contained Components, also known as GameObjects.
+For this exercise, the approach was to turn each class in the /Games folder into a composition of self-contained Components, also known as GameObjects.
 
 A **GameObject** is any entity that's part of the gameplay experience (e.g., Brick, Paddle, Ball, Power-Up), but instead of relying on concrete classes to describe each in-game entity, these same enties were broken donw into small **Components** that hold the necessary information to give our GameObjects some sort of behavior.
 
