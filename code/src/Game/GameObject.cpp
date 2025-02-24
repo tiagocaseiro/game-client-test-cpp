@@ -43,8 +43,8 @@ GameObjectShared GameObject::MakeGameObject(GamePlayState& gameState, const std:
     return gameObject;
 }
 
-GameObject::GameObject(const std::string& debugGameObjectTemplateId, GamePlayState& gameState)
-    : mDebugGameObjectTemplateId(debugGameObjectTemplateId), mGameState(gameState)
+GameObject::GameObject(const std::string& gameObjectTemplateId, GamePlayState& gameState)
+    : mGameObjectTemplateId(gameObjectTemplateId), mGameState(gameState)
 {
 }
 
