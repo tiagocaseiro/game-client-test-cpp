@@ -71,10 +71,14 @@ void Paddle::SetTextureHandle(const int textureHandle)
 
 void Paddle::SetTimedData(Paddle::TimedData timedData)
 {
+    if(mTimedData)
+    {
+        timedData.timer = mTimedData->timer.value_or(0) + timedData.timer.value_or(0);
+    }
     mTimedData = timedData;
+    // assert(!"Update COLLISION BOX!");
     if(mCollisionBox)
     {
-        // mCollisionBox->Set(mCollisionBox->, {});
     }
 }
 
