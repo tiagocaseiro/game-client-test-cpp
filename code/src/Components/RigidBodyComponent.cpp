@@ -74,5 +74,6 @@ void RigidBodyComponent::Update()
         return;
     }
 
+    // Update transform with new position data from the collider that's being changed by the rigid body
     transformComponent->SetPosition(collisionComponent->ColliderPosition());
 }
