@@ -10,10 +10,21 @@
 #include "GameStates/GamePlayState.h"
 #include "HealthComponent.h"
 
-ScoreOnCollisionComponent::ScoreOnCollisionComponent(GameObjectRef owner, King::Engine& engine, const int score)
+ScoreOnCollisionComponent::ScoreOnCollisionComponent(GameObjectRef owner, King::Engine& engine, const int score,
+                                                     const std::string& targetColliderType)
     : Component(owner, engine), mScore(score)
 {
     mEngine.GetCollisionWorld().AddCollisionListener(*this);
+
+    if(owner.expired())
+    {
+        return;
+    }
+
+    if(targetColliderType == "paddle")
+    {
+        mTargetColliderId = owner.lock()->GameState().GetPaddle()->GetColliderId();
+    }
 }
 
 ScoreOnCollisionComponent::~ScoreOnCollisionComponent()
@@ -38,8 +49,14 @@ void ScoreOnCollisionComponent::OnCollision(int l, int r)
 
     if((mHealthComponentRef.expired() || mHealthComponentRef.lock()->IsAlive()) && (l == colliderId || r == colliderId))
     {
-
-        mOwnerRef.lock()->GameState().UpdateScore(mScore);
+        if(mTargetColliderId && (l == *mTargetColliderId || r == *mTargetColliderId))
+        {
+            mOwnerRef.lock()->GameState().UpdateScore(mScore);
+        }
+        else
+        {
+            mOwnerRef.lock()->GameState().UpdateScore(mScore);
+        }
     }
 }
 const std::string& ScoreOnCollisionComponent::ID()
@@ -56,6 +73,11 @@ ComponentShared ScoreOnCollisionComponent::MakeComponent(GameObjectRef owner, Ki
     {
         score = std::stoi(it->second);
     }
+    std::string colliderType;
+    if(auto it = parameters.find("targetColliderType"); it != std::end(parameters))
+    {
+        colliderType = it->second;
+    }
 
-    return std::shared_ptr<Component>(new ScoreOnCollisionComponent(owner, engine, score));
+    return std::shared_ptr<Component>(new ScoreOnCollisionComponent(owner, engine, score, colliderType));
 }

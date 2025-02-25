@@ -26,11 +26,13 @@ public:
     void OnCollision(int l, int r) override;
 
 private:
-    ScoreOnCollisionComponent(GameObjectRef owner, King::Engine& engine, const int score);
+    ScoreOnCollisionComponent(GameObjectRef owner, King::Engine& engine, const int score,
+                              const std::string& targetColliderType);
     void OnCreate() override;
 
 private:
     const int mScore;
     std::weak_ptr<CollisionComponent> mCollisionComponentRef;
     std::weak_ptr<HealthComponent> mHealthComponentRef;
+    std::optional<int> mTargetColliderId;
 };

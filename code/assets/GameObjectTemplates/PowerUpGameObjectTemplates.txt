@@ -7,16 +7,13 @@ componentEnd=
 componentStart=TransformComponent
 componentEnd=
 
-componentStart=RigidBodyComponent
-speed=400
-directionX=0
-directionY=1
-componentEnd=
-
 componentStart=CollisionCircleComponent
 radius=12
 layer=16
 mask=0
+componentEnd=
+
+componentStart=DestroyOnGameStateReset
 componentEnd=
 
 id=EnlargePowerUpGameObject
@@ -32,3 +29,31 @@ sprite=Paddle-large.png
 timer=10
 componentEnd=
 
+componentStart=RigidBodyComponent
+speed=400
+directionX=0
+directionY=1
+componentEnd=
+
+
+id=GoldPowerUpGameObject
+
+parent=BasePowerUpGameObject
+
+componentStart=SpriteComponent
+sprite1=powerup-gold.png
+componentEnd=
+
+componentStart=DestroyOnCollisionComponent
+componentEnd=
+
+componentStart=RigidBodyComponent
+speed=1000
+directionX=0
+directionY=1
+componentEnd=
+
+componentStart=ScoreOnCollisionComponent
+score=500
+targetColliderType=paddle
+componentEnd=

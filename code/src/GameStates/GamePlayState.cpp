@@ -10,6 +10,7 @@
 #include "Components/CollisionComponent.h"
 #include "Components/Component.h"
 #include "Components/DamageOnCollisionComponent.h"
+#include "Components/DestroyOnGameStateReset.h"
 #include "Components/HealthComponent.h"
 #include "Components/PowerUpComponent.h"
 #include "Components/ScoreOnCollisionComponent.h"
@@ -17,6 +18,7 @@
 #include "Components/SpawnGameObjectOnDestructionComponent.h"
 #include "Components/SpriteComponent.h"
 #include "Components/TransformComponent.h"
+
 #include "Game/GameObject.h"
 
 bool StartsWith(const std::string& text, const std::string& start)
@@ -182,7 +184,7 @@ void GamePlayState::ResetPaddleAndBall()
     for(const std::shared_ptr<GameObject>& gameObject : mGameObjects)
     {
         // Clean screen of power-ups dropping
-        if(gameObject && gameObject->HasComponent<PowerUpComponent>())
+        if(gameObject && gameObject->HasComponent<DestroyOnGameStateReset>())
         {
             gameObject->MarkForDeath();
         }

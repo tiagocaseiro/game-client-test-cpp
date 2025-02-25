@@ -9,13 +9,7 @@
 class CollisionComponent;
 class Paddle;
 
-class PowerUpComponent : public Component
-{
-public:
-    using Component::Component;
-};
-
-class PaddleResizePowerUpComponent final : public PowerUpComponent, King::CollisionWorld::CollisionListener
+class PaddleResizePowerUpComponent final : public Component, King::CollisionWorld::CollisionListener
 
 {
 public:

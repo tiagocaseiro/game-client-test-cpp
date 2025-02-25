@@ -65,7 +65,8 @@ void Paddle::SetTextureHandle(const int textureHandle)
 
 void Paddle::SetPowerUp(Paddle::PowerUp powerUp)
 {
-    if(mPowerUp)
+    // TODO: It's cheeky to rely on textureIds to differentiate between power-ups
+    if(mPowerUp && powerUp.newTextureHandle == powerUp.newTextureHandle)
     {
         // Increase new timer with the already existing one's
         powerUp.timer = mPowerUp->timer.value_or(0) + powerUp.timer.value_or(0);
