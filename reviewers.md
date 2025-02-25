@@ -1,19 +1,19 @@
 # Information for reviewers
 
 For this exercise, the approach was to turn each class in the /Games folder into a composition of self-contained Components, also known as GameObjects.
-It's an ECS-like approach of breaking concepts into small and reusable Components.
+It's an ECS-like approach of breaking classes into small and reusable Components.
 
 Unlike pure ECS, the components for this exercise don't just hold data but are able to execute their own behavior.
 
 A **GameObject** is any entity that's part of the gameplay experience (e.g., Brick, Paddle, Ball, Power-Up), but instead of relying on concrete classes to describe each in-game entity, these same enties were broken donw into small **Components** that hold the necessary information to give our GameObjects some sort of behavior.
 
-So a GameObject is just a container of differents Components that, when used together, give a GameObjects its characteristics.
+So a GameObject is just a container of different Components that, when used together, give a GameObject its characteristics.
 
 ## GameObject Implementation
-A GameObject simply consist of a container of Components.
+A GameObject simply consists of a container of Components.
 
 ### Example
-A normal Brick GameObject would contain a HealthComponent which would be responsible for holding the information regarding how many hits points it has left. 
+A normal Brick GameObject would contain a HealthComponent which would be responsible for holding the information regarding how many hit points it has left. 
 
 The HealthComponent would mark its GameObject for destruction when its health ticks all the way down to 0.
 
@@ -29,6 +29,7 @@ Every Component that composes a GameObject is derived from the abstract Componen
     - Called right before destructor is called
 - void OnComponentAdded(std::shared_ptr\<Component\>);
     - Called when a new sibling component is Added to GameObject
+    
 ### Component Catalog
 - TransformComponent
     - Holds transform data (position, rotation, scale) 
@@ -60,6 +61,7 @@ Every Component that composes a GameObject is derived from the abstract Componen
     - Is able to temporarily change the Paddle's size and sprite when the collider provider by one of the CollisionComponents detects a collision
 - DestroyOnGameStateReset
     - Mark GameObject for destruction whenever GameState is reset (done by GameState)
+
 ## Serialization
 In an effort to data-drive this solution, each GameObject's definition, also known as **GameObjectTemplate**, is stored in a .txt file that describes the Components that need to be instantiated and the necessary parameters with which they should be initialized.
 These files can be found in the code/assets/GameObjectTemplates folder.
