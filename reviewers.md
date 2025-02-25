@@ -130,8 +130,7 @@ Out of convenience, GameObjectTemplate ids for Bricks match the tile entries on 
 
 This solution was developed and tested only on Windows 11.
 
-##Improvements
-
+## Improvements
 The one PowerUpComponent that was created is way too bespoke and too specific towards the paddle. Transitioning the Paddle into this GameObject framework would allow the flexibility to not have this Component as bespoke. There’s the possibility of having its ownership being transferred from the PowerUpGameObject to the PaddleGameObject where is Update function would execute its PoweUp effect.
 
 Components would benefit from having some of their behavior be managed by outside systems that are able to aggregate them and manipulate them for a specific tasks.
