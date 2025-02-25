@@ -103,6 +103,7 @@ std::shared_ptr<GameObject> LevelLoader::LoadBrick(const std::string& row, glm::
         if(std::shared_ptr<CollisionBoxComponent> collisionBoxComponent = brick->FindComponent<CollisionBoxComponent>())
         {
             collisionBoxComponent->SetPosition(brickPos);
+            // This step might be pointless but now I don't want to touch this right before submitting this exercise
             collisionBoxComponent->SetDimensions({kBrickWidth, kBrickHeight});
         }
     }

@@ -12,8 +12,6 @@ namespace King
     struct CircleCollider;
 } // namespace King
 
-class CircleCollider;
-
 class CollisionComponent : public Component
 {
 public:

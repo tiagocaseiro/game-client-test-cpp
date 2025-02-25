@@ -71,6 +71,7 @@ CollisionBoxComponent::CollisionBoxComponent(GameObjectRef owner, King::Engine& 
 
 void CollisionBoxComponent::SetDimensions(const glm::vec2& dimensions)
 {
+    // TODO: Have this actually update the collider's dimensions
     mDimensions = dimensions;
 }
 
@@ -123,7 +124,7 @@ ComponentShared CollisionCircleComponent::MakeComponent(GameObjectRef owner, Kin
                                                         const std::unordered_map<std::string, std::string>& parameters)
 {
     glm::vec2 position;
-    float radius       = 0;
+    float radius       = 0.0f;
     unsigned int layer = 0;
     unsigned int mask  = 0;
     if(auto it = parameters.find("posX"); it != std::end(parameters))

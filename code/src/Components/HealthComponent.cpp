@@ -42,6 +42,7 @@ void HealthComponent::Decrement(const u32 dec)
 
     if(std::shared_ptr<SpriteComponent> spriteComponent = GetOwnerComponent<SpriteComponent>())
     {
+        // Have sprite reflect the health of GameObject
         spriteComponent->SetActiveTextureHandle(mMaxHealth - mHealth);
     }
 }

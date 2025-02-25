@@ -9,7 +9,7 @@
 class CollisionComponent;
 class Paddle;
 
-// Mark GameObject for destruction whenever GameState is reset
+// Mark GameObject for destruction whenever GameState is reset (done by GameState)
 class DestroyOnGameStateReset final : public Component
 
 {

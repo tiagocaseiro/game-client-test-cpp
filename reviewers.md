@@ -59,7 +59,7 @@ Every Component that composes a GameObject is derived from the abstract Componen
 - PaddleResizePowerUpComponent
     - Is able to temporarily change the Paddle's size and sprite when the collider provider by one of the CollisionComponents detects a collision
 - DestroyOnGameStateReset
-    - Mark GameObject for destruction whenever GameState is reset
+    - Mark GameObject for destruction whenever GameState is reset (done by GameState)
 ## Serialization
 In an effort to data-drive this solution, each GameObject's definition, also known as **GameObjectTemplate**, is stored in a .txt file that describes the Components that need to be instantiated and the necessary parameters with which they should be initialized.
 These files can be found in the code/assets/GameObjectTemplates folder.
