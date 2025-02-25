@@ -12,6 +12,7 @@ namespace King
     class Engine;
 }
 
+// Spawn a new GameObject after destruction
 class SpawnGameObjectOnDestructionComponent final : public Component
 {
 

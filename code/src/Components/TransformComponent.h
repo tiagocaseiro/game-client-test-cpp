@@ -4,6 +4,7 @@
 
 #include "Component.h"
 
+// Holds transform data (position, rotation, scale)
 class TransformComponent final : public Component
 {
 public:

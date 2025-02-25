@@ -8,6 +8,8 @@
 
 class CollisionComponent;
 
+// Immediately marks GameObject for destruction down when the collider provider by one of the CollisionComponents
+// detects a collision
 class DestroyOnCollisionComponent final : public Component, King::CollisionWorld::CollisionListener
 {
 public:

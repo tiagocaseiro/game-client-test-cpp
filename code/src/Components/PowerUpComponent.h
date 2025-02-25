@@ -9,6 +9,8 @@
 class CollisionComponent;
 class Paddle;
 
+// Is able to temporarily change the Paddle's size and sprite when the collider provider by one of the
+// CollisionComponents detects a collision
 class PaddleResizePowerUpComponent final : public Component, King::CollisionWorld::CollisionListener
 
 {

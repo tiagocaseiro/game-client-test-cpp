@@ -12,6 +12,7 @@ namespace King
     class Engine;
 }
 
+// In charge of rendering textures
 class SpriteComponent final : public Component
 {
 

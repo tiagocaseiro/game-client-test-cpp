@@ -14,6 +14,7 @@ namespace King
     class Engine;
 }
 
+// Updates score when collider provider by one of the CollisionComponents detects a collision
 class ScoreOnCollisionComponent final : public Component, King::CollisionWorld::CollisionListener
 {
 

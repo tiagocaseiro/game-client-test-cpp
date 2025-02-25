@@ -12,6 +12,7 @@ namespace King
     class Engine;
 }
 
+// Updates score when object is destroyed
 class ScoreOnDestructionComponent final : public Component
 {
 

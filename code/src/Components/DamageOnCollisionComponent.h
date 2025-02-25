@@ -10,6 +10,7 @@ class CollisionComponent;
 class HealthComponent;
 class ScoreComponent;
 
+// Ticks HealthComponent down when the collider provider by one of the CollisionComponents detects a collision
 class DamageOnCollisionComponent final : public Component, King::CollisionWorld::CollisionListener
 {
 public:

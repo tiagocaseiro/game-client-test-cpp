@@ -35,6 +35,7 @@ protected:
     const unsigned int mMask;
 };
 
+// Defines a collision box
 class CollisionBoxComponent final : public CollisionComponent
 {
 public:
@@ -57,6 +58,7 @@ private:
     King::BoxCollider* mBoxCollision;
 };
 
+// Defines a collision circle
 class CollisionCircleComponent : public CollisionComponent
 {
 public:

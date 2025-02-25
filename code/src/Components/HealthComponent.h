@@ -2,6 +2,7 @@
 
 #include "Component.h"
 
+// Holds hit point data
 class HealthComponent final : public Component
 {
     using u32 = size_t;
