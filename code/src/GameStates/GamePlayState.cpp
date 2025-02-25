@@ -142,6 +142,7 @@ void GamePlayState::Start()
         ClearRemovedObjects();
     }
 
+    // TODO: Move this to a spot where it's only read once and not before every level
     ReadSerializedGameObjectTemplates(mEngine, "./assets/GameObjectTemplates/BrickGameObjectTemplates.txt");
     ReadSerializedGameObjectTemplates(mEngine, "./assets/GameObjectTemplates/PowerUpGameObjectTemplates.txt");
 
