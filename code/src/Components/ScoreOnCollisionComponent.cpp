@@ -47,11 +47,16 @@ void ScoreOnCollisionComponent::OnCollision(int l, int r)
 
     int colliderId = mCollisionComponentRef.lock()->ColliderId();
 
+    // Score only if this GameObject is alive or is immortal
     if((mHealthComponentRef.expired() || mHealthComponentRef.lock()->IsAlive()) && (l == colliderId || r == colliderId))
     {
-        if(mTargetColliderId && (l == *mTargetColliderId || r == *mTargetColliderId))
+        if(mTargetColliderId)
         {
-            mOwnerRef.lock()->GameState().UpdateScore(mScore);
+            // If it has a target collider then only scores if it has a collision with said collider
+            if(l == *mTargetColliderId || r == *mTargetColliderId)
+            {
+                mOwnerRef.lock()->GameState().UpdateScore(mScore);
+            }
         }
         else
         {
