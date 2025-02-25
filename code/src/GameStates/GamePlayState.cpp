@@ -457,6 +457,7 @@ void GamePlayState::DebugHitBrick()
 
 int GamePlayState::NumBricks() const
 {
+    // TODO: Have the concept of bricks not be tied down to having a HealthComponent
     return std::count_if(std::begin(mGameObjects), std::end(mGameObjects), [](const GameObjectRef& gameObjectShared) {
         return gameObjectShared.expired() == false && gameObjectShared.lock()->HasComponent<HealthComponent>();
     });
